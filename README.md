@@ -11,7 +11,7 @@ Many attempts at explaining FP do so by contrasting it with object programming o
 
 More specifically, we can observe this evolution in the form of improved pattern matching, improved support for definition of lambdas, and the tendency toward syntactic concision in the well established languages such as C#, Java, JavaScript and even in the extemporaneous C++. The more modern languages are powerhouses of features that support FP concepts out of the box with some notable exponents such as Scala and F# even daring to support the M-word (well... more on that later). The features include Sum types, Type classes, Generic constraints, Custom Operators, and even types systems with **global resolution** (Rust, OCaml, F#) or type deduction that escapes function definitions. Moreover the features as a rule are complemented by very purposeful concise (but not cryptic) sytax that facilitates a style of programming that I am about to describe.
 
-## Starting with a little bit of syntax
+## How syntax and semantics promote functional thought process 
 
 So, I just said that OO and FP are more complimentary than they are in conflict and I stand by what I said. However, contrasting **syntax** that is **typically** associated with OO is a good point to start our journey. Of course there is no avoiding of picking a target language for this "exercise" in contrast and I will start with an ML derivative such as (OCaml, F#) and will contrast is with something from the variety of the likes of  C# or Java or, say, Python and Javascript.
 
@@ -127,8 +127,4 @@ dist = squaredLength vec
 theta = angle vec
 ```
 
-
-
-
-
-
+Despite being a statically typed languages MLs allow us to **overshadow** constants. The `let` keyword actually declares constants and now variables (which is consitent with the functional thought process) however the later `let`s effectively redeclare the constants. This has the effect of us almost specializing functions for a given use case. This is very convenient and very flexible. We are once again not forced to make decisions about which class the computations live on. The requirements might change in the future and functions are just very flexible and **granular** building blocks that are easy to specialize given partial application and more generally the light and concise syntax of MLs. 
