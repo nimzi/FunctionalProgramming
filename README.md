@@ -20,13 +20,13 @@ type Vector2 = {x:float; y:float}
 
 let squaredLenght v = v.x * v.x + v.y * v.y
 
-result = squaredLenght {3.0, 4.0}
+let result = squaredLenght {3.0, 4.0}
 ```
 
 Here we define a functions `squaredLength` that operates on a datatype `Vector2`, a two-dimensional vector. An equivalent Python definition might like like this. In ML derivatives we do not have to use parest during function application. In fact the last line (the one where we apply an argument) can be rewritten as follows:
 
 ```F#
-result = {3.0, 4.0} |> squaredLenght 
+let result = {3.0, 4.0} |> squaredLenght 
 ```
 
 That is with argument on the left followed by an "apply" operator and followed by function name. We shall se how this is useful. Now switching to Python...
@@ -61,14 +61,14 @@ let squaredLenght m v =
     if m = Euclidean then v.x * v.x + v.y * v.y
     else let sum = v.x + v.y in sum * sum
 
-result = squaredLenght Manhattan {3.0, 4.0}
+let result = squaredLenght Manhattan {3.0, 4.0}
 // alternatively
-result' = {3.0, 4.0} |> squaredLenght Manhattan
+let result' = {3.0, 4.0} |> squaredLenght Manhattan
 ```
 The example below uses partial application to compute `result'` (read result prime just like in math... F# allows the prime character in identifiers). What is actually happening here is that the expression on the right of the `|>` operator produces a function and the vector literal is being applied to it. In this scenario vector is flavored to be a primary and metric as secondary. Notice that we made the **role** decision **locally** rather than at the point of definition; as makes sense in our local use case. We could have also made the metric appear as a primary by using a _higher order function_ (a function that operates on other functions) to reverse the order of arguments in `squaredLenght`; let it be called `flip`. The last line of the above example would then look like this:
 
 ```F#
-result' =  Manhattan |> (flip squaredLength) {3.0, 4.0}
+let result' =  Manhattan |> (flip squaredLength) {3.0, 4.0}
 ```
 
 As a sidenote notice that a Python equivalent of the above would look something along the lines of `flip(squaredLength)(Manhattan, Vector2(3,4))`. This isn't bad, but try mentally extending this thought process in its natural direction and its easy to conclude that the operator based syntax exerts much less cognitive load than the army of parens in a highly nested C-style function call syntax. E.g. `f(g(h(k(arg))))` tends to be less readable than `arg |> k |> h |> g |> f`.
@@ -87,8 +87,8 @@ let sl = squaredLenght Manhattan
 
 // Now use the context for our computation
 
-result = {3.0, 4.0} |> sl
-result' = sl {3.0, 4.0}     // Or even simpler
+let result = {3.0, 4.0} |> sl
+let result' = sl {3.0, 4.0}     // Or even simpler
 ```
 
 * I can already hear the screams, rebuttals, and refutations. 
@@ -123,8 +123,9 @@ let angle = context ||> angle
 
 let a = {3.0, 4.0}
 let b = {1.0, 7.0}
-dist = squaredLength vec
-theta = angle vec
+
+let dist = squaredLength vec
+let theta = angle vec
 ```
 
 Despite being statically typed languages MLs allow us to **overshadow** constants. The `let` keyword actually declares constants and not variables (which is consitent with the functional thought process) however the later `let`s effectively redeclare the constants. This has the effect of us almost specializing functions for a given use case. This is very convenient and very flexible. We are once again not forced to make decisions about which class the computations live on. The requirements might change in the future and functions are just very flexible and **granular** building blocks that are easy to specialize given partial application and more generally the light and concise syntax of MLs. 
