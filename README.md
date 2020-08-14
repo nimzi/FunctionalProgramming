@@ -13,6 +13,12 @@ More specifically, we can observe this evolution in the form of improved pattern
 
 ## Starting with a little bit of syntax
 
-So, I just said that OO and FP are more complimentary than they are in conflict and I stand by what I said. However, contrasting **syntax** that is **typically** associated with OO is a good point to start our journey. Of course there is no avoiding of picking a target language for this "exercise".
+So, I just said that OO and FP are more complimentary than they are in conflict and I stand by what I said. However, contrasting **syntax** that is **typically** associated with OO is a good point to start our journey. Of course there is no avoiding of picking a target language for this "exercise" in contrast and I will start with an ML derivative such as (OCaml, F#) and will contrast is with something like C# or Java (although Python and Javascript might have been some excellent candidates).
+
+```
+type Vector(x:float, y:float)
+
+
+```
 
 
