@@ -71,6 +71,23 @@ The example below uses partial application to compute `result'` (read result pri
 result' =  Manhattan |> (flip squaredLenght) {3.0, 4.0}
 ```
 
+Yet alternatively we could think of the computation as happening inside a **context** of a metric where we **configure** the context prior to its utilization. 
 
+```F#
+type Vector2 = {x:float; y:float}
+type Metric = Eucledian | Manhattan 
+
+let squaredLenght m v = ...
+
+//
+// Now prepare a context
+//
+
+let sl = squaredLenght Manhattan
+
+result = {3.0, 4.0} |> sl
+// Or even simpler
+result' = sl {3.0, 4.0}
+```
 
 I can already hear the screams, rebuttals, and refutations of the form: "But 
