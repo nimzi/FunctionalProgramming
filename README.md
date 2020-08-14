@@ -51,3 +51,20 @@ Now let us imagine we are working toward some GIS package to measure distances b
 
 Well, in an OO scenario we would probably write a _Metric_ class that given a _Vector2_ would compute its lenght (or squaredLength). Makes sense! So, probably `squaredLenght` method now needs to live on a _Metric_ object and maybe we write a another **convenience** method on the _Vector2_ that takes a metric as a parameter. Or maybe we should write just a function (thankfully Python allows writing just functions) that takes the two objects and produces a result. But let us take a step back and assume that we decided to use methods. After all we love our dot notation for a reason. We can chain our calls and make long meaningful expressions of the form `obj.foo(arg).bar(anotherArg).zed(someOtherArg, andYetAnother)`. So we are faced with a decision on whether a _Metric_ object should feature the implementations specific to each type of geometric primitive or the primitive should just compute compute values based on a metric argument. In other words we need to decide a primary object from the secondary. Had we just used a function that took the two arguments we wouldn't have to contend with these **design** decisions. 
 
+ML-style languages provide an interesting feature called **partial application** for functions which is related to the concept of *curried* functions which enables use peculiar way of writing the above scenario down.
+
+```F#
+type Vector2 = {x:float; y:float}
+type Metric = Eucledian | Manhattan 
+
+let squaredLenght m v = 
+    if m = Eucledian then v.x * v.x + v.y * v.y
+    else let sum = v.x + v.y in sum * sum
+
+result = squaredLenght Manhattan {3.0, 4.0}
+// alternatively
+result' = {3.0, 4.0} |> squaredLenght Manhattan
+```
+The example below uses partial application to compute `result'` (read result prime just like in math... F# allows the prime character in identifiers). What is actually happening here is that the expression on the right of the `|>` operator produces a function and the vector literal is peing applied to it. 
+
+I can already hear the screams, rebuttals, and refutations of the form: "But 
