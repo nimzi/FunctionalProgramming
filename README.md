@@ -96,4 +96,6 @@ result' = sl {3.0, 4.0}     // Or even simpler
 * Why code in this weird language with weird syntax?
     - Well, because it is actually proven to be more **ergonomic** and as the saying goes: "There is no such thing as intuitive. There's only the familiar". Really, truely deep. 
 * Why all this abstract mumbo jumbo? Where are the productivity gains?
-    - It is true that it is very not clear **yet** what they are, but if nothing else we had to think less about design. And the setup is more flexible. Good abstractions are hard to come up with and we ideally would like to defer the abstraction step until we absolutely are forced to take it (or better yet have the option of making it local)
+    - It is true that it is not extremely clear **yet** what they are, but if nothing else we had to think less about design. And the setup is more flexible. Good abstractions are hard to come up with and we ideally would like to defer the abstraction step until we absolutely are forced to take it (or better yet have the option of making it local)
+    
+Let us explore this a little more. 
