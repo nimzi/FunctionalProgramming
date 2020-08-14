@@ -71,7 +71,7 @@ The example below uses partial application to compute `result'` (read result pri
 result' =  Manhattan |> (flip squaredLength) {3.0, 4.0}
 ```
 
-As a sidenote notice that a Python equivalent of the above would look something along the lines of `flip(squaredLength)(Manhattan, Vector2(3,4))`. This isn't bad, but try mentally extending this thought process in its natural direction and its easy to conclude that the operator based syntax exerts much less cognitive load than the army of parens in a highly nested C-style function call syntax. E.g. `f(g(h(k(arg))))` is less readable than `arg |> k |> h |> g |> f`.
+As a sidenote notice that a Python equivalent of the above would look something along the lines of `flip(squaredLength)(Manhattan, Vector2(3,4))`. This isn't bad, but try mentally extending this thought process in its natural direction and its easy to conclude that the operator based syntax exerts much less cognitive load than the army of parens in a highly nested C-style function call syntax. E.g. `f(g(h(k(arg))))` tends to be less readable than `arg |> k |> h |> g |> f`.
 
 Yet alternatively we could think of the computation as happening inside a **context** of a metric where we **configure** the context prior to its utilization. 
 
