@@ -77,17 +77,23 @@ Yet alternatively we could think of the computation as happening inside a **cont
 type Vector2 = {x:float; y:float}
 type Metric = Eucledian | Manhattan 
 
-let squaredLenght m v = ...
+let squaredLenght m v = // ...
 
-//
+
 // Now prepare a context
-//
-
 let sl = squaredLenght Manhattan
 
+// Now use the context for our computation
+
 result = {3.0, 4.0} |> sl
-// Or even simpler
-result' = sl {3.0, 4.0}
+result' = sl {3.0, 4.0}     // Or even simpler
 ```
 
-I can already hear the screams, rebuttals, and refutations of the form: "But 
+I can already hear the screams, rebuttals, and refutations. Yes, you can defune just functions in Python. Yes, you can even define curried functions. Yes, you can even emulate custom operators and write code similar to the above with some effort. But it takes affort and it is unnatural. And, this is consistent with my introductory point that you can do functional programming in almost any language. However, if things are too unnatural or difficult in programming developers aren't likely to do them. 
+
+The second echelon of protestations... 
+Q: Why code in this weird language with weird syntax?
+Well, because it is actually proven to be more **ergonomic** and as the saying goes: "There is no such thing as intuitive. There's only the familiar". Really, truely deep. 
+
+Q: Why all this abstract mumbo jumbo? Where are the productivity gains?
+It is true that it is very not clear **yet** what they are, but if nothing else we had to think less about design. And the setup is more flexible. Good abstractions are hard to come up with and we ideally would like to defer the abstraction step until we absolutely are forced to take it (or better yet have the option of making it local)
