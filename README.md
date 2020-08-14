@@ -89,9 +89,11 @@ result = {3.0, 4.0} |> sl
 result' = sl {3.0, 4.0}     // Or even simpler
 ```
 
-I can already hear the screams, rebuttals, and refutations. Yes, you can defune just functions in Python. Yes, you can even define curried functions. Yes, you can even emulate custom operators and write code similar to the above with some effort. But it takes affort and it is unnatural. And, this is consistent with my introductory point that you can do functional programming in almost any language. However, if things are too unnatural or difficult in programming developers aren't likely to do them. 
+###I can already hear the screams, rebuttals, and refutations. 
 
-The second echelon of protestations... 
+Yes, you can defune just functions in Python. Yes, you can even define curried functions. Yes, you can even emulate custom operators and write code similar to the above with some effort. But it takes affort and it is unnatural. And, this is consistent with my introductory point that you can do functional programming in almost any language. However, if things are too unnatural or difficult in programming developers aren't likely to do them. 
+
+###The second echelon of protestations... 
 Q: Why code in this weird language with weird syntax?
 Well, because it is actually proven to be more **ergonomic** and as the saying goes: "There is no such thing as intuitive. There's only the familiar". Really, truely deep. 
 
