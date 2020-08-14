@@ -13,12 +13,28 @@ More specifically, we can observe this evolution in the form of improved pattern
 
 ## Starting with a little bit of syntax
 
-So, I just said that OO and FP are more complimentary than they are in conflict and I stand by what I said. However, contrasting **syntax** that is **typically** associated with OO is a good point to start our journey. Of course there is no avoiding of picking a target language for this "exercise" in contrast and I will start with an ML derivative such as (OCaml, F#) and will contrast is with something like C# or Java (although Python and Javascript might have been some excellent candidates).
+So, I just said that OO and FP are more complimentary than they are in conflict and I stand by what I said. However, contrasting **syntax** that is **typically** associated with OO is a good point to start our journey. Of course there is no avoiding of picking a target language for this "exercise" in contrast and I will start with an ML derivative such as (OCaml, F#) and will contrast is with something from the variety of the likes of  C# or Java or, say, Python and Javascript.
 
 ```F#
 type Vector2 = {x:float; y:float}
 
+let squaredLenght v = v.x * v.x + v.y * v.y
 
+result = squaredLenght {3.0, 4.0}
 ```
 
+Here we define a functions `squaredLength` that operates on a datatype `Vector2`, a two-dimensional vector. An equivalent Python definition might like like this.
 
+```Python
+class Vector2:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+    
+
+    def squaredLength (self):
+        return self.x * self.x + self.y * self.y
+        
+
+result = Vector2(3,4).squaredLength()
+```
