@@ -23,7 +23,13 @@ let squaredLenght v = v.x * v.x + v.y * v.y
 result = squaredLenght {3.0, 4.0}
 ```
 
-Here we define a functions `squaredLength` that operates on a datatype `Vector2`, a two-dimensional vector. An equivalent Python definition might like like this.
+Here we define a functions `squaredLength` that operates on a datatype `Vector2`, a two-dimensional vector. An equivalent Python definition might like like this. In ML derivatives we do not have to use parest during function application. In fact the last line (the one where we apply an argument) can be rewritten as follows:
+
+```F#
+result = {3.0, 4.0} |> squaredLenght 
+```
+
+That is with argument on the left followed by an "apply" operator and followed by function name. We shall se how this is useful. Now switching to Python...
 
 ```Python
 class Vector2:
@@ -38,3 +44,5 @@ class Vector2:
 
 result = Vector2(3,4).squaredLength()
 ```
+
+We purposefully chose a Python method instead of function to contrast the dot notation with a function call in F#. So far so good. Dot notation is actually good and useful 
