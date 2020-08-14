@@ -68,8 +68,10 @@ result' = {3.0, 4.0} |> squaredLenght Manhattan
 The example below uses partial application to compute `result'` (read result prime just like in math... F# allows the prime character in identifiers). What is actually happening here is that the expression on the right of the `|>` operator produces a function and the vector literal is being applied to it. In this scenario vector is flavored to be a primary and metric as secondary. Notice that we made the **role** decision **locally** rather than at the point of definition; as makes sense in our local use case. We could have also made the metric appear as a primary by using a _higher order function_ (a function that operates on other functions) to reverse the order of arguments in `squaredLenght`; let it be called `flip`. The last line of the above example would then look like this:
 
 ```F#
-result' =  Manhattan |> (flip squaredLenght) {3.0, 4.0}
+result' =  Manhattan |> (flip squaredLength) {3.0, 4.0}
 ```
+
+As a sidenote notice that a Python equivalent of the above would look something along the lines of `flip(squaredLength)(Manhattan, Vector2(3,4))`. This isn't bad, but try mentally extending this thought process in its natural direction and its easy to conclude that the operator based syntax exerts much less cognitive load than the army of parens in a highly nested C-style function call syntax. E.g. `f(g(h(k(arg))))` is less readable than `arg |> k |> h |> g |> f`.
 
 Yet alternatively we could think of the computation as happening inside a **context** of a metric where we **configure** the context prior to its utilization. 
 
@@ -100,4 +102,10 @@ result' = sl {3.0, 4.0}     // Or even simpler
 * But didn't you say that OO and FP are complementary? It seems you are arguing against OO here. 
     - Not really. Object programming is a collection of design principles and patterns in its own right. Unfortunately the design philosophy and its machinery tend to be overused. Objects and classes are really about top level design and are about dividing a program into modules with possibly reusable interfaces. OO Machinery is great for macro-level design and when there is relative clarity and stability around requirements. At the micro level and especially in situations when requirements gyrate FP principles and patterns rule supreme. With OO it is tempting to classify anything and everything or to overbundle behaviors and develp abstractions at the micro level which do not withstand the test of time. Occasionally there are scenarios where multiple avenues are possible each involving different degrees of object and functional ingredients and design choices are a matter of taste. However, a developer skilled in both families of patterns should be able to use the **combined** toolbelt to his advandage.  
 
-Let us explore this a little more. 
+Let us explore the above example a little further. We were asked by a business to implement some additional operations on vectors. Among them is a query for angle between vectors. Let us, for the sake of the discussion, assume that the metric plays a role in angle measurement. Some months later a new feature in our product requires us to perform compuations on planes and spheres. Straight lines on spheres are actually arcs and their Euclidean lenghts are computed differently (taking the radius into account, etc). Let us not worry about the math. 
+
+
+
+
+
+
