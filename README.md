@@ -65,6 +65,12 @@ result = squaredLenght Manhattan {3.0, 4.0}
 // alternatively
 result' = {3.0, 4.0} |> squaredLenght Manhattan
 ```
-The example below uses partial application to compute `result'` (read result prime just like in math... F# allows the prime character in identifiers). What is actually happening here is that the expression on the right of the `|>` operator produces a function and the vector literal is peing applied to it. 
+The example below uses partial application to compute `result'` (read result prime just like in math... F# allows the prime character in identifiers). What is actually happening here is that the expression on the right of the `|>` operator produces a function and the vector literal is being applied to it. In this scenario vector is flavored to be a primary and metric as secondary. Notice that we made the **role** decision **locally** rather than at the point of definition; as makes sense in our local use case. We could have also made the metric appear as a primary by using a _higher order function_ (a function that operates on other functions) to reverse the order of arguments in `squaredLenght`; let it be called `flip`. The last line of the above example would then look like this:
+
+```F#
+result' = {3.0, 4.0} |> squaredLenght Manhattan
+```
+
+
 
 I can already hear the screams, rebuttals, and refutations of the form: "But 
