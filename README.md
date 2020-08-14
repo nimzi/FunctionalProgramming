@@ -55,10 +55,10 @@ ML-style languages provide an interesting feature called **partial application**
 
 ```F#
 type Vector2 = {x:float; y:float}
-type Metric = Eucledian | Manhattan 
+type Metric = Euclidean | Manhattan 
 
 let squaredLenght m v = 
-    if m = Eucledian then v.x * v.x + v.y * v.y
+    if m = Euclidean then v.x * v.x + v.y * v.y
     else let sum = v.x + v.y in sum * sum
 
 result = squaredLenght Manhattan {3.0, 4.0}
@@ -77,7 +77,7 @@ Picking up where we left off, we could think of the F# computation as happening 
 
 ```F#
 type Vector2 = {x:float; y:float}
-type Metric = Eucledian | Manhattan 
+type Metric = Euclidean | Manhattan 
 
 let squaredLenght m v = // ...
 
@@ -107,7 +107,7 @@ Let us explore the above example a little further. We were asked by a business t
 
 ```F#
 type Vector2 = {x:float; y:float}
-type Metric = Eucledian | Manhattan 
+type Metric = Euclidean | Manhattan 
 type Space = Planar | Spherical of radius:float
 
 let earthRadius = 6356 // kilometers 
