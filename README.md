@@ -132,10 +132,22 @@ Despite being statically typed languages MLs allow us to **overshadow** constant
 
 > In FP this is thought process is very common. We think of solutions in terms of computations and their contexts and in terms of specializing computations for a given context as in the above example. 
 
-So, as OO programmers we are trained to recognize hierarchies and to use the hierarchical nature of things to our advantage and seems that FP does away with all that. Let us remember that hierarchies are first of all graphs and more precisely acyclic digraphs. 
+## Referential transparency, immutability, and cognitive load
+
+There is all this buzz around immutability, constants instead of variables, and how it makes programming simpler. Isn't it more difficult to program with more constraints rather than fewer? Isn't it the cast that it is harder to design functional algorithms than their non-functional counterparts? Yes, this is the case. The full explanation is longer than I am willing to commit to in this article, however, hopefully I am going to chizel out a few points that will shed some light on the above. 
+
+First, programming with fewer mutations decreases **cognitive load** load on a programming. In other words, it is easier to reason about code that makes use of **mostly** immutable structures. The reason I put an emphasis on _mostly_ in the previous sentense is that in many cases it is counterproductive to dead-bolt onself to immutability as one runs the risk of making many simple things overly complicated (and this isn't ideal for real software that ships). However, huge percentages of real codes or real applications stand to benefit enormously from enforced immutability. Consider a function call `f(a,b,c,d)` expressed in C-style syntax or its equivalent `f a b c d` expressed in ML-style syntax. If arguments `a b c d` are immutable structures (in other words constants) upon ruminating over implementation of `f` a developer can assume that the values represented by the variables won't change in the middle of execution of `f`. This is a huge deal! Huge! If in addition `f` doesn't make use of some kind of global mutable state the function is called **pure** or **referentially transparent**. What this means is that `f` can in theor be replaced by a lookup table of all permutations of possible arguments. This makes the function very predictable in a sense that its output depends **only** on the arguments. Why is this desirable? If nothing else such computations are easier to test (as in unit testing) and easier to reason about. Pure computations **compose** into bigger pure computations which in turn exhibit the nice characteristics we like to see as engineers.
+
+## What about Inheritance, Encapsulation, and Polymorphism
+
+So, as OO programmers we are trained to recognize hierarchies and to use the hierarchical nature of things to our advantage and at first sight it might seem that FP does away with all that. Let us remember that hierarchies are first of all graphs and more precisely acyclic digraphs. 
 
 
 
 The above is but a grain of sand in the bigger discussion of modern software engineering and how certain programming languages support and promote useful design patterns and architectures. We may not fully appreciate it at times but programming languages affect and even shape our thought processes and design decisions. A much longer conversation is necessary to cover this space of modern programming languages and how they support functional patterns and concepts. The thought process is rooted in _Algebraic Structures_, _Algebraic Data Types_, _Type classes_, _referential transparency_, _state isolation_, and list goes on. There is also much to be said about how type systems of certain languages support the functional mojo and the whole M-word topic. Really though, functional programmers have come up with way to many scary sounding terms because we, the programmers, do that to **every** domain we touch; and I mean **every**. One look at the terminology of any **unfamiliar** CS subdomains such as Computer Graphics and Geometric Modeling or Machine Learning would have one cringe reflexively even if the undelying concepts are straightforward. Repeating myself, FP is about **advanced** programming concepts, tools, and methods some of which take a significant effort to master. It would be naive to assume that this subdomain would escape the "laws of nature".
+
+## The M-word, language-oriented and aspect-oriented programming
+
+## Bottom-up vs top-down programming 
 
 Let us escape back into the real world of everyday applications; the world where apps manage users, authorizations, and credentials.
