@@ -180,7 +180,7 @@ let AdminAuthEvidence =
     }
 ```
 
-Finally we can provide a generic function to simplify things and the call site
+Finally we can provide a generic function to simplify things at the call site
 
 ```F#
 let isAuthenticated<'A> (evidence:AuthenticatedUser<'A>) user = evidence.IsAuthenticated(user)
@@ -191,13 +191,19 @@ And, at the call site we have...
 ```F#
 let u:AdminUser = findSuspiciousAdmin ()
 if isAuthenticated AdminAuthEvidence u then 
-  // start monitoring
-  // a potential intruder
+  // start monitoring a potential intruder
 else
-  // authentication must have expired
-  // expell all her activity
+  // authentication must have expired expell all her activity
 ```
 
+We can conclude now that a _type class_ is a mechanism to unify **distinct** types. In some sense to add behavior to types post-definition and without modifying their internals. Is is a compile-time mechanism that relies on compiler support for parametric polymorphism.
+
+* Q: Looks very complicated. I could just create a little inheritance hierarchy quickly and be done.
+    - We are trying to solve an inherently complicated problem. We are making distinct datatypes do the same thing without **prematurely** abstracting over them.
+    - MLs are featureful languages give programmers other mechanisms to **emulate** the idea behind type classes.
+    - Different languages have varying degrees of support for compile-time abstractions. For example in Haskell, Scala, and Swift achieving the above looks much simpler.
+* Q: Aren't you making use of OO facilities in F# anyway to achieve this?
+    - Yes, but I didn't have to. Also, I am using OO very lightly here. Again, the important thing is that I didn't have to modify the user types that were given to me. Instead, I extended them in the direction of the requirements.
 
 
 ## Interlude
