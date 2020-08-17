@@ -142,7 +142,13 @@ First, programming with fewer mutations decreases a **cognitive load** on a prog
 
 ## What about Inheritance, Encapsulation, and Polymorphism
 
-So, as OO programmers we are trained to recognize hierarchies and to use the hierarchical nature of things to our advantage and at first sight it might seem that FP does away with all that. Let us remember that hierarchies are first of all graphs and more precisely acyclic digraphs. 
+So, as OO programmers we are trained to recognize hierarchies and to use the hierarchical nature of things to our advantage and at first sight it might seem that FP does away with all that. Let us remember that hierarchies are first of all graphs and more precisely acyclic digraphs with the most common digraphs being trees (which we lovingly tend to call single inheritance hierarchies). Functional programmers swim with the graphs except they tend use many more patterns to deal with them and to take advantage of, at times, hierarchical nature of varous domains.
+
+Most distributed applications deal with user data at one point or another and very often with their authentication and authorization. Let us briefly remind ourselves taht authentication aspect deals with recognizing a valid user (given, say, and id and a password) while authorization deals with capabilities of users (or application capabilities as they relate to a given user). Let us further assume that in our system we have _basic_ users (some designs use a term guest user) and _advanced_ ones (called admins when approprite for an application). We can imagine that admins are _authorized_ to do everything _guests_ are and more. These requirements immediately present an opportunity to employ OO features and define a hierarchy. Moreover, it might turn out well in the unlikely case that the requirements will persist over the lifecycle of an application. A common functional pattern is to think in terms of _data_ and _evidence_ that the data is something or other and to allow computations on the user data to take place in the **context** of the evidence that a user is something or another. 
+
+I will allow myself a little digression here and will give an analogy from mathematics. Imagine a math libray that operates on different types of number kernels. More specifically, say our number objects are there to model real and complex numbers. When operating on complex numbers can also be viewed as vectors with the corresponding geometric primities. This is also an oportunity for a hierarchy. However, another way to think about the scenario is that of a computation on a complex number as taking place in the face of the _evidence_ (evidence being an evidence object or even a type) that it is a vector. How is this good? This is just very flexible.
+
+
 
 
 
