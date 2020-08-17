@@ -150,7 +150,11 @@ I will allow myself a little digression here and will give an analogy from mathe
 
 Back to our users scenario. Let us actually implement it in F#.
 
-
+```F#
+type ContactInfo = //...
+type UserCategory = Guest | Admin
+type User = { ID: string; PasswordHash:string; Category:UserCategory; contactInfo:ContactInfo}
+```
 
 
 
