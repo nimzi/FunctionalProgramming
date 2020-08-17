@@ -223,7 +223,7 @@ for elem in userList do
     | Admin a when isAuthenticated AdminAuthEvidence u -> //...
 ```
 
-Still too complicated?
+Still too complicated? Well, we could have _emulated_ type classes directly without the use of _evidence pattern_ above. Our `isAuthenticated` generic function could have been implemented as a **regular** function over the `User` **sum type**. As simple as that. In fact languages such as Typescript and Scala3 allow the declarations with even less ceremony via **nameless sum types** where we declare a function argument as being either a `GuestUser` or an `AdminUser`. This approachi is made yet more ergonomic due to the excellent **pattern matching** capabilities of modern programming languages.
 
 
 ## Interlude
