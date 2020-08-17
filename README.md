@@ -198,14 +198,32 @@ else
 
 We can conclude now that a _type class_ is a mechanism to unify **distinct** types. In some sense to add behavior to types post-definition and without modifying their internals. Is is a compile-time mechanism that relies on compiler support for parametric polymorphism.
 
-* Q: Looks very complicated. I could just create a little inheritance hierarchy quickly and be done.
+- Q: Looks very complicated. I could just create a little inheritance hierarchy quickly and be done.
     - We are making distinct datatypes do the same thing without **prematurely** abstracting over them. Sometimes the luxury can require extra ceremony.
-    - MLs are featureful languages and give programmers other mechanisms to **emulate** the idea behind type classes (the gold standard being a Haskell implementation or even the upcoming at thime of writing this Scala's **given**s)
+    - MLs are featureful languages and give programmers other mechanisms to **emulate** the idea behind type classes (the gold standard being a Haskell implementation or even the upcoming at thime of writing this Scala3's **given**s or Scala2's **implicits**)
     - Other FP-friendly languages have varying degrees of support for such compile-time abstractions. For example in Haskell, Scala, and Swift achieving the above looks much simpler.
-* Q: Aren't you making use of OO facilities in F# anyway to achieve this?
+- Q: Aren't you making use of OO facilities in F# anyway to achieve this?
     - First, there are other ways to achieve a similar effect in MLs. We demonstrate one good way of this.
     - Second, by no means do I contradict myself by momentarily using interfaces. In fact, we are leaning on inheritance for its support for parametric polymorphism.  
-    - Most importantly, I wan't forced to modify the existing data types. Instead, I extended them in the direction of the requirements.
+    - Most importantly, I wan't forced to modify the existing data types. Instead, I extended them in the direction of the requirements from "the outside".
+
+This seems to work when we are processing only one type user. Had the user types been proper objects sharing an interface we would be able to process a collection of them uniformly without, say, without type coersion. In FP we can achieve this effect with support of **algebraic datatypes** or more specifically in this case the **sum types**. We could define a _unifier_ for our users as follows:
+
+```F#
+type User = Guest of GuestUser | Admin of AdminUser
+```
+
+And, say, operate on a list of them 
+
+```F#
+let userList:List<User> = [someGuest; someAdmin; anotherGuest]
+for elem in userList do
+    match elem with
+    | Guest g when isAuthenticated GuestAuthEvidence g -> //...
+    | Admin a when isAuthenticated AdminAuthEvidence u -> //...
+```
+
+Still too complicated?
 
 
 ## Interlude
