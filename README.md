@@ -148,16 +148,37 @@ Most distributed applications deal with user data at one point or another and ve
 
 I will allow myself a little digression here and will give an analogy from mathematics. Imagine a math libray that operates on different types of number kernels. More specifically, say our number objects are there to model real and complex numbers. Complex numbers can also be viewed as vectors with the corresponding geometric primities. This is also an oportunity for a hierarchy. However, another way to think about the scenario is that of a computation on a complex number as taking place in the face of the _evidence_ (evidence being an evidence object or even a type) that the number is also a vector. How is this good? This is just very flexible. We don't need to ruminate over ascendancy of each concept. Is a complex number a vector or is a vector a complex number. Later we could introduce a point object and in turn a point could be viewed as a vector or a complex number. Under this design we don't need to think about how to fit a point concept into an existing hierarchy of concepts. All we need is the evidence that a point can be viewed as, say, a complex number in certain **contexts**. This is a little abstract at this point but will become crystal clear shortly. I promise!
 
-Back to our users scenario. Let us actually implement it in F#.
+Back to our users scenario. Let us make things a little more concrete. Our gust users don't need an id or a password, just the contact info, and their authentication never expires once, say, their contact info had been verified. Admins on the other hand have to be registered with the system and upon a period of inactivity they will be asked to re-authenticate.
+
+What might that look like in F#. 
 
 ```F#
 type ContactInfo = //...
-type UserCategory = Guest | Admin
-type User = { ID: string; PasswordHash:string; Category:UserCategory; contactInfo:ContactInfo}
+
+type GuestUser = { Contact:ContactInfo }
+type AdminUser = { ID: string; PasswordHash:string; Contact:ContactInfo }
 ```
 
+The data types are fundamentally different but they are both users. Onto defining a **typeclass**. Wait, what's a typeclass? Hang on. It will become clear soon.
 
+```F#
+type AuthenticatedUser<'A> =
+    abstract member IsAuthenticated : 'A -> bool
+```
 
+We are defining a new "interface" (emphasis on quonte-unquote) in order to "tag" different datatypes and put them under the same umbrella. And here are the implementations of this abstract datatype.
+
+```
+let AuthenticatedGuest =
+    { new AuthenticatedUser<_> with
+        member this.IsAuthenticated(u:GuestUser) = // ...
+    }
+        
+let RectangleShape =
+    { new AuthenticatedUser<_> with
+        member this.IsAuthenticated(u:AdminUser) = // ...
+    }
+```
 
 
 The above is but a grain of sand in the bigger discussion of modern software engineering and how certain programming languages support and promote useful design patterns and architectures. We may not fully appreciate it at times but programming languages affect and even shape our thought processes and design decisions. A much longer conversation is necessary to cover this space of modern programming languages and how they support functional patterns and concepts. The thought process is rooted in _Algebraic Structures_, _Algebraic Data Types_, _Type classes_, _referential transparency_, _state isolation_, and list goes on. There is also much to be said about how type systems of certain languages support the functional mojo and the whole M-word topic. Really though, functional programmers have come up with way to many scary sounding terms because we, the programmers, do that to **every** domain we touch; and I mean **every**. One look at the terminology of any **unfamiliar** CS subdomains such as Computer Graphics and Geometric Modeling or Machine Learning would have one cringe reflexively even if the undelying concepts are straightforward. Repeating myself, FP is about **advanced** programming concepts, tools, and methods some of which take a significant effort to master. It would be naive to assume that this subdomain would escape the "laws of nature".
