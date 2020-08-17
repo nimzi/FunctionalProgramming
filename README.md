@@ -162,24 +162,45 @@ type AdminUser = { ID: string; PasswordHash:string; Contact:ContactInfo }
 The data types are fundamentally different but they are both users. Onto defining a **typeclass**. Wait, what's a typeclass? Hang on. It will become clear soon.
 
 ```F#
-type AuthenticatedUser<'A> =
+type Authenticated<'A> =
     abstract member IsAuthenticated : 'A -> bool
 ```
 
 We are defining a new "interface" (emphasis on quonte-unquote) in order to "tag" different datatypes and put them under the same umbrella. And here are the implementations of this abstract datatype.
 
-```
-let AuthenticatedGuest =
-    { new AuthenticatedUser<_> with
+```F#
+let GuestAuthEvidence =
+    { new Authenticated<_> with
         member this.IsAuthenticated(u:GuestUser) = // ...
     }
         
-let RectangleShape =
-    { new AuthenticatedUser<_> with
+let AdminAuthEvidence =
+    { new Authenticated<_> with
         member this.IsAuthenticated(u:AdminUser) = // ...
     }
 ```
 
+Finally we can provide a generic function to simplify things and the call site
+
+```F#
+let isAuthenticated<'A> (evidence:AuthenticatedUser<'A>) user = evidence.IsAuthenticated(user)
+```
+
+And, at the call site we have...
+
+```F#
+let u:AdminUser = findSuspiciousAdmin ()
+if isAuthenticated AdminAuthEvidence u then 
+  // start monitoring
+  // a potential intruder
+else
+  // authentication must have expired
+  // expell all her activity
+```
+
+
+
+## Interlude
 
 The above is but a grain of sand in the bigger discussion of modern software engineering and how certain programming languages support and promote useful design patterns and architectures. We may not fully appreciate it at times but programming languages affect and even shape our thought processes and design decisions. A much longer conversation is necessary to cover this space of modern programming languages and how they support functional patterns and concepts. The thought process is rooted in _Algebraic Structures_, _Algebraic Data Types_, _Type classes_, _referential transparency_, _state isolation_, and list goes on. There is also much to be said about how type systems of certain languages support the functional mojo and the whole M-word topic. Really though, functional programmers have come up with way to many scary sounding terms because we, the programmers, do that to **every** domain we touch; and I mean **every**. One look at the terminology of any **unfamiliar** CS subdomains such as Computer Graphics and Geometric Modeling or Machine Learning would have one cringe reflexively even if the undelying concepts are straightforward. Repeating myself, FP is about **advanced** programming concepts, tools, and methods some of which take a significant effort to master. It would be naive to assume that this subdomain would escape the "laws of nature".
 
