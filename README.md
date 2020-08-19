@@ -69,15 +69,15 @@ let result = squaredLenght Manhattan {3.0, 4.0}
 // alternatively
 let result' = {3.0, 4.0} |> squaredLenght Manhattan
 ```
-The example below uses partial application to compute `result'` (read result prime just like in math... F# allows the prime character in identifiers). What is actually happening here is that the expression on the right of the `|>` operator produces a function and the vector literal is being applied to it. In this scenario vector is flavored to be a primary and metric as secondary. Notice that we made the **role** decision **locally** rather than at the point of definition; as makes sense in our local use case. We could have also made the metric appear as a primary by using a _higher order function_ (a function that operates on other functions) to reverse the order of arguments in `squaredLenght`; let it be called `flip`. The last line of the above example would then look like this:
+The example below uses partial application to compute `result'` (read result prime just like in math... F# allows the prime character in identifiers). What is actually happening here is that the expression on the right of the `|>` operator produces a function and the vector literal is being applied to it. In this scenario vector is flavored to be a primary and metric as secondary. Notice that we made the **role** decision **locally** rather than at the point of definition; as it makes sense in our local use case. We could have also made the metric appear as a primary by using a _higher order function_ (a function that operates on other functions) to reverse the order of arguments in `squaredLenght`; let it be called `flip`. The last line of the above example would then look like this:
 
 ```F#
 let result' =  Manhattan |> (flip squaredLength) {3.0, 4.0}
 ```
 
-As a sidenote notice that a Python equivalent of the above would look something along the lines of `flip(squaredLength)(Manhattan, Vector2(3,4))`. This isn't bad, but try mentally extending this thought process in its natural direction and its easy to conclude that the operator based syntax exerts much lower cognitive load than the army of parens in a highly nested C-style function call syntax. E.g. `f(g(h(k(arg))))` tends to be less readable than `arg |> k |> h |> g |> f`.
+As a sidenote notice that a Python equivalent of the above would look something along the lines of `flip(squaredLength)(Manhattan, Vector2(3,4))`. This isn't bad, but try mentally extending this thought process in its natural direction and its easy to conclude that the operator based syntax exerts much lower cognitive load than the army of parens in a highly nested C-style function call syntax. E.g. `f(g(h(k(arg))))` tends to be less readable than a pipe operator `|>` based version `arg |> k |> h |> g |> f`. In the dot notation world it is common to use a builder _syntactic_ pattern to clean tings up. There we chain method calls as in `arg.k().h().g().f()`. This looks suspiciously similar to the `arg |> k |> h |> g |> f`, however, to achive "dotness" we have to invest in declaring possibly multiple classes that cooperate in this way. In addtion, piping into functions is just more flexible and concise (in view of currying and partial application).
 
-Picking up where we left off, we could think of the F# computation as happening inside a **context** of a metric where we **configure** the context prior to its utilization. 
+Picking up where we left off, we could think of the F# computation as happening inside a **context** of a metric where we **configure** the context prior to its utilization. This thought process of computing in a context and of configuring a context shows up all over the place in functional design.
 
 ```F#
 type Vector2 = {x:float; y:float}
