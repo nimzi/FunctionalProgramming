@@ -156,6 +156,20 @@ So, why is referential transparency desirable. This is huge topic in its own rig
 
 This brings us to situations when we **must** deal with mutable data; and we must in real programs. Let us repurpose the _quicksort_ modify it where now we are dealing with a very large array copying it isn't an option. Let us imagine that we have a remote sorting service that is vends the result periodically. Functional designs are all about **isolating** mutable state while wrapping a functional membrane around it. Sucha a service would use the in-place quicksort to avoid profligate memory use, but will employ a **functional shell** for the rest of the system. The shell will address such aspects as concurrency and error handling and even possibly the serving (yes, IO is not strictly functional but again can be treated by **isolating** output). This thought process yields codebases which are, say 90%, referentailly transparent.
 
+This brings us to situations when we **must** deal with mutable data; and we must in real programs. Let us repurpose the _quicksort_ modify it where now we are dealing with a very large array copying it isn't an option. Let us imagine that we have a remote sorting service that is vends the result periodically. Functional designs are all about **isolating** mutable state while wrapping a functional membrane around it. Sucha a service would use the in-place quicksort to avoid profligate memory use, but will employ a **functional shell** for the rest of the system. The shell will address such aspects as concurrency and error handling and even possibly the serving (yes, IO is not strictly functional but again can be treated by **isolating** output). This thought process yields codebases which are, say 90%, referentailly transparent.
+This brings us to situations when we **must** deal with mutable data; and we must in real programs. Let us repurpose the _quicksort_ modify it where now we are dealing with a very large array copying it isn't an option. Let us imagine that we have a remote sorting service that is vends the result periodically. Functional designs are all about **isolating** mutable state while wrapping a functional membrane around it. Sucha a service would use the in-place quicksort to avoid profligate memory use, but will employ a **functional shell** for the rest of the system. The shell will address such aspects as concurrency and error handling and even possibly the serving (yes, IO is not strictly functional but again can be treated by **isolating** output). This thought process yields codebases which are, say 90%, referentailly transparent.
+
+With all the benefits of FP unfortunately there is no such thing as free lunch. 🥙 🥗. Immutable data isn't syntactially easy to, well, mutate! This is only natural. The simple statements such as `collection.add(item)` become the more awkward `newVersionOfCollection = add collection item`. We do not mutate a functional collection, instead we alway get a new version by, say, adding or removing elements. Same goes for mutating parts of nested structures where
+
+```F#
+structure.substructure1.substructure2.item = newValue
+``` 
+
+becomes a more laborious **destructuring** and reassembly process. **Modern languages do make this process better** but manipulation of immutable data is still more laborious than that of the mutable counterpart. 
+
+So, what is the verdict on immutability? In my opinion the zero sum game is clear. There is some syntactic inconvenience that I am willing to pay with for **significantly** lower congnitive load. Also recall that in many cases I can and will use temporary isolated mutable data for computations while preserving all the benefits. In many cases the performance hit I sustain due to copying data an extra odd time is irrelevant. In cases where performance hit is felt I will either **isolate** some mutable state or will make use of **temporal data structures** otherwise known as [**persistent data structures**](https://en.wikipedia.org/wiki/Persistent_data_structure) which in turn yield additional benefits of inexpensively keeping histories of their states.
+
+
 ## What about Inheritance, Encapsulation, and Polymorphism
 
 So, as OO programmers we are trained to recognize hierarchies and to use the hierarchical nature of things to our advantage and at first sight it might seem that FP does away with all that. Let us remember that hierarchies are first of all graphs and more precisely acyclic digraphs with the most common digraphs being trees (which we lovingly tend to call single inheritance hierarchies). Functional programmers swim with the graphs except they tend use many more patterns to deal with them and to take advantage of, at times, hierarchical nature of varous domains.
@@ -175,14 +189,14 @@ type GuestUser = { Contact:ContactInfo }
 type AdminUser = { ID: string; PasswordHash:string; Contact:ContactInfo }
 ```
 
-The data types are fundamentally different but they are both users. Onto defining a **typeclass**. Wait, what's a typeclass? Hang on. It will become clear soon.
+The data types are fundamentally different but they are both represent users. Also, we shouldn't assume that the datatypes were even written at the same time or came from the same system. We might very well be merging two separate, say, backends. Well, onto defining a **typeclass**. Wait, what's a typeclass? Hang on. It will become clear soon.
 
 ```F#
 type Authenticated<'A> =
     abstract member IsAuthenticated : 'A -> bool
 ```
 
-We are defining a new "interface" (emphasis on quonte-unquote) in order to "tag" different datatypes and put them under the same umbrella. And here are the implementations of this abstract datatype.
+We are defining a new **parametrized** template in order to "tag" different datatypes and put them under the same **compile-time** umbrella. And here are the implementations of this abstract datatype.
 
 ```F#
 let GuestAuthEvidence =
@@ -219,7 +233,7 @@ We can conclude now that a _type class_ is a mechanism to unify **distinct** typ
     - MLs are featureful languages and give programmers other mechanisms to **emulate** the idea behind type classes (the gold standard being a Haskell implementation or even the upcoming at thime of writing this Scala3's **given**s or Scala2's **implicits**)
     - Other FP-friendly languages have varying degrees of support for such compile-time abstractions. For example in Haskell, Scala, and Swift achieving the above looks much simpler.
 - Q: Aren't you making use of OO facilities in F# anyway to achieve this?
-    - First, there are other ways to achieve a similar effect in MLs. We demonstrate one good way of this.
+    - First, there are other ways to achieve a similar effect in MLs. We demonstrate one good way of doing this.
     - Second, by no means do I contradict myself by momentarily using interfaces. In fact, we are leaning on inheritance for its support for parametric polymorphism.  
     - Most importantly, I wan't forced to modify the existing data types. Instead, I extended them in the direction of the requirements from "the outside".
 
@@ -241,6 +255,23 @@ for elem in userList do
 
 Still too complicated? Well, we could have generalized over (or unified) the user datatypes directly without the use of teh _evidence pattern_ above. Our `isAuthenticated` generic function could have been implemented as a **regular** function over the `User` **sum type**. As simple as that. In fact languages such as Typescript and Scala3 allow the declarations with even less ceremony via **nameless sum types** where we declare a function argument as being either a `GuestUser` or an `AdminUser`. This approach is made yet more ergonomic by the excellent **pattern matching** capabilities of modern programming languages.
 
+We would define our users as before.
+
+```F#
+type User = Guest of GuestUser | Admin of AdminUser
+```
+
+...and simply pattern match on data...
+
+```F#
+let userList:List<User> = [someGuest; someAdmin; anotherGuest]
+for elem in userList do
+    match elem with
+    | Guest g when Guest.isAuthenticated g -> //...
+    | Admin a when Admin.isAuthenticated u -> //...
+```
+
+...with **one** downside being that since F# and OCaml do not support function overloading we have to separate the versions of auth functions into the corresponding modules (we had to create modules `Guest` and `Admin` without having a construct enforce an interface). Previously we used `Authenticated<_>` as a semantic label of sorts to define a concept. This is extremely useful for documenting the intent.
 
 ## Interlude
 
