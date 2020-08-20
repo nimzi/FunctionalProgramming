@@ -13,9 +13,9 @@ More specifically, we can observe the momentum toward FP in the form of improved
 
 I share much of [James Sinclar](https://jrsinclair.com/articles/2019/what-i-wish-someone-had-explained-about-functional-programming/)'s very well worded perspective on FP. However, here I focus on practical aspects where the article may as well have been titled "Software Engineering with functional flavor" or "Benefits of FP in Software Engineering" or even something like "Functional Patterns in Real Software". Who knows? Good titles are hard to come up with just like the good abstractions 😊 ... Hold that thought.
 
-## How syntax and semantics promote functional thought process 
+## How programming language design promotes functional thought process 
 
-So, I just said that OO and FP are more complementary than they are in conflict and I stand by that assertion. However, contrasting **syntax** that is **typically** associated with OO is a good point to start our journey. Of course there is no avoiding of picking a target language for this "exercise" in contrast and I will start with an ML derivative such as (OCaml, F#) and will contrast it with something from the variety of the likes of  C# or Java or, say, Python and Javascript.
+So, I just said that OO and FP are more complementary than they are in conflict and I stand by that assertion. However, contrasting **syntax** and **semantics** that are **typically** associated with OO is a good point to start our journey. Naturally there is no avoiding of picking a target language for this comparison and I will start with an ML derivative such as (OCaml, F#) and will contrast it with something from the variety of the likes of  C# or Java or, say, Python and Javascript.
 
 > A brief introduction to MLs can be found [here](https://thomasbandt.com/fsharp-introduction) and a longer one [here](https://fsharpforfunandprofit.com/).
 
@@ -49,7 +49,7 @@ class Vector2:
 result = Vector2(3,4).squaredLength()
 ```
 
-We purposefully chose a Python method instead of function to contrast the dot notation with a function call in, say F#. So far so good. Dot notation is actually good and useful. In fact it almost looks like we traded the dot for the `|>` operator except in F# we are 'pushing' an argument into a function rather than a method. We have gained exactly **nothing** in productivity or understandability or architectural advantages.
+We purposefully chose a Python _method_ instead of function to contrast the dot notation with a function call in, say F#. So far so good. Dot notation is actually good and useful. In fact it almost looks like we traded the dot for the `|>` operator except in F# we are 'pushing' an argument into a function rather than a method. We have gained exactly **nothing** in productivity or understandability or architectural advantages.
 
 Now let us imagine we are working toward some GIS package to measure distances between locations on maps. In such packages a concept such as _metric_ is inalienable. A metric is a method of distance measurement. The _Euclidean_ metric is what we are well familiar with and what we've implemented. However in urban enviroments a _Manhattan metric_ is more appropriate where we cannot move accross diagonals and the distance is computed as `x + y`. Of course it is easy to imagine other possibilies metrics and consequently we would like write flexible code that takes a metric into account for our lenght computation.
 
@@ -274,6 +274,8 @@ for elem in userList do
 ```
 
 ...with **one** downside being that since F# and OCaml do not support function overloading we have to separate the versions of auth functions into the corresponding modules (we had to create modules `Guest` and `Admin` without having a construct enforce an interface). Previously we used `Authenticated<_>` as a semantic label of sorts to define a concept. This is extremely useful for documenting the intent.
+
+> Typeclasses are ultimately supported so that **ADTs** can be implemented. Scala for instance supports implicit parameters; paremeters that do not need to be specified at call site...
 
 ## Interlude
 
