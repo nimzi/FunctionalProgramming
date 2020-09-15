@@ -24,13 +24,13 @@ type Vector2 = {x:float; y:float}
 
 let squaredLength v = v.x * v.x + v.y * v.y
 
-let result = squaredLength {x = 3.0, y = 4.0}
+let result = squaredLength {x = 3.0; y = 4.0}
 ```
 
 Here we define a functions `squaredLength` that operates on a datatype `Vector2`, a two-dimensional vector. An equivalent Python definition might like like this. In ML derivatives we do not have to use parest during function application. In fact the last line (the one where we apply an argument) can be rewritten as follows:
 
 ```F#
-let result = {x = 3.0, y = 4.0} |> squaredLength 
+let result = {x = 3.0; y = 4.0} |> squaredLength 
 ```
 
 That is with argument on the left followed by an "apply" operator and followed by function name. We shall se how this is useful. Now switching to Python...
@@ -65,20 +65,20 @@ let squaredLength m v =
     if m = Euclidean then v.x * v.x + v.y * v.y
     else let sum = v.x + v.y in sum * sum
 
-let result = squaredLength Manhattan {x = 3.0, y = 4.0}
+let result = squaredLength Manhattan {x = 3.0; y = 4.0}
 // alternatively
-let result' = {x = 3.0, y = 4.0} |> squaredLength Manhattan
+let result' = {x = 3.0; y = 4.0} |> squaredLength Manhattan
 ```
 The example below uses partial application to compute `result'` (read result prime just like in math... F# allows the prime character in identifiers). What is actually happening here is that the expression on the right of the `|>` operator produces a function and the vector literal is being applied to it. In this scenario vector is flavored to be a primary and metric as secondary. Notice that we made the **role** decision **locally** rather than at the point of definition; as it makes sense in our local use case. We could have also made the metric appear as a primary by using a _higher order function_ (a function that operates on other functions) to reverse the order of arguments in `squaredLength`; let it be called `flip`. The last line of the above example would then look like this:
 
 ```F#
-let result' =  Manhattan |> (flip squaredLength) {x = 3.0, y = 4.0}
+let result' =  Manhattan |> (flip squaredLength) {x = 3.0; y = 4.0}
 ```
 
 Also, the following syntax can make a function (and consequently a **function returning expression**) appear as a binary operator. This can be convenient in an array of circumstances.
 
 ```F#
-let result' =  Manhattan |> flip squaredLength <| {x = 3.0, y = 4.0}
+let result' =  Manhattan |> flip squaredLength <| {x = 3.0; y = 4.0}
 ```
 
 As a sidenote notice that a Python equivalent of the above would look something along the lines of `flip(squaredLength)(Manhattan, Vector2(3,4))`. This isn't bad, but try mentally extending this thought process in its natural direction and its easy to conclude that the operator based syntax exerts much lower cognitive load than the army of parens in a highly nested C-style function call syntax. E.g. `f(g(h(k(arg))))` tends to be less readable than a **pipe** operator `|>` based version `arg |> k |> h |> g |> f`. 
@@ -99,8 +99,8 @@ let sl = squaredLength Manhattan
 
 // Now use the context for our computation
 
-let result = {x = 3.0, y = 4.0} |> sl
-let result' = sl {x = 3.0, y = 4.0}     // Or even simpler
+let result = {x = 3.0; y = 4.0} |> sl
+let result' = sl {x = 3.0; y = 4.0}     // Or even simpler
 ```
 
 Many of the above features can be emulates in languages with what I would call **weaker** support for FP. Consider Python. Yes, you can defune just functions in Python. Yes, you can even define curried functions with **effort**. Yes, one can even emulate custom operators and write code similar to the above with **effort**. But it takes affort! This is consistent with my introductory point that functional programming can be done any language or put another way functional patterns and concepts can find an incarnation via any programming language. However, if things are too unnatural or difficult developers aren't likely to do them. Really, we won't! Hence, programming languages do affect things like design and style to substantial degree.
@@ -137,8 +137,8 @@ let squaredLength = context ||> squaredLength
 let angle = context ||> angle
 // Now use the context for our computation
 
-let a = {x = 3.0, y = 4.0}
-let b = {x = 1.0, y = 7.0}
+let a = {x = 3.0; y = 4.0}
+let b = {x = 1.0; y = 7.0}
 
 let dist = squaredLength vec
 let theta = angle vec
