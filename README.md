@@ -24,13 +24,13 @@ type Vector2 = {x:float; y:float}
 
 let squaredLenght v = v.x * v.x + v.y * v.y
 
-let result = squaredLenght {3.0, 4.0}
+let result = squaredLenght {x = 3.0, y = 4.0}
 ```
 
 Here we define a functions `squaredLength` that operates on a datatype `Vector2`, a two-dimensional vector. An equivalent Python definition might like like this. In ML derivatives we do not have to use parest during function application. In fact the last line (the one where we apply an argument) can be rewritten as follows:
 
 ```F#
-let result = {3.0, 4.0} |> squaredLenght 
+let result = {x = 3.0, y = 4.0} |> squaredLenght 
 ```
 
 That is with argument on the left followed by an "apply" operator and followed by function name. We shall se how this is useful. Now switching to Python...
@@ -65,14 +65,14 @@ let squaredLenght m v =
     if m = Euclidean then v.x * v.x + v.y * v.y
     else let sum = v.x + v.y in sum * sum
 
-let result = squaredLenght Manhattan {3.0, 4.0}
+let result = squaredLenght Manhattan {x = 3.0, y = 4.0}
 // alternatively
-let result' = {3.0, 4.0} |> squaredLenght Manhattan
+let result' = {x = 3.0, y = 4.0} |> squaredLenght Manhattan
 ```
 The example below uses partial application to compute `result'` (read result prime just like in math... F# allows the prime character in identifiers). What is actually happening here is that the expression on the right of the `|>` operator produces a function and the vector literal is being applied to it. In this scenario vector is flavored to be a primary and metric as secondary. Notice that we made the **role** decision **locally** rather than at the point of definition; as it makes sense in our local use case. We could have also made the metric appear as a primary by using a _higher order function_ (a function that operates on other functions) to reverse the order of arguments in `squaredLenght`; let it be called `flip`. The last line of the above example would then look like this:
 
 ```F#
-let result' =  Manhattan |> (flip squaredLength) {3.0, 4.0}
+let result' =  Manhattan |> (flip squaredLength) {x = 3.0, y = 4.0}
 ```
 
 As a sidenote notice that a Python equivalent of the above would look something along the lines of `flip(squaredLength)(Manhattan, Vector2(3,4))`. This isn't bad, but try mentally extending this thought process in its natural direction and its easy to conclude that the operator based syntax exerts much lower cognitive load than the army of parens in a highly nested C-style function call syntax. E.g. `f(g(h(k(arg))))` tends to be less readable than a pipe operator `|>` based version `arg |> k |> h |> g |> f`. In the dot notation world it is common to use a builder _syntactic_ pattern to clean tings up. There we chain method calls as in `arg.k().h().g().f()`. This looks suspiciously similar to the `arg |> k |> h |> g |> f`, however, to achive "dotness" we have to invest in declaring possibly multiple classes that cooperate in this way. In addtion, piping into functions is just more flexible and concise (in view of currying and partial application).
@@ -91,8 +91,8 @@ let sl = squaredLenght Manhattan
 
 // Now use the context for our computation
 
-let result = {3.0, 4.0} |> sl
-let result' = sl {3.0, 4.0}     // Or even simpler
+let result = {x = 3.0, y = 4.0} |> sl
+let result' = sl {x = 3.0, y = 4.0}     // Or even simpler
 ```
 
 * I can already hear the screams, rebuttals, and refutations. 
@@ -131,14 +131,14 @@ let squaredLength = context ||> squaredLenght
 let angle = context ||> angle
 // Now use the context for our computation
 
-let a = {3.0, 4.0}
-let b = {1.0, 7.0}
+let a = {x = 3.0, y = 4.0}
+let b = {x = 1.0, y = 7.0}
 
 let dist = squaredLength vec
 let theta = angle vec
 ```
 
-Despite being statically typed languages MLs allow us to **overshadow** constants. The `let` keyword actually declares constants and not variables (which is consitent with the functional thought process) however the later `let`s effectively redeclare the constants. This has the effect of us almost specializing functions for a given use case. This is very convenient and very flexible. We are once again not forced to make decisions about which class the computations live on. The requirements might change in the future and functions are just very flexible and **granular** building blocks that are easy to specialize given the support for partial application and more generally the light and concise syntax of MLs. 
+Despite being statically typed, MLs allow us to **overshadow** constants. The `let` keyword actually declares constants and not variables (which is consitent with the functional thought process) however the later `let`s effectively redeclare the constants. This has the effect of us almost specializing functions for a given use case. This is very convenient and very flexible. We are once again not forced to make decisions about which class the computations live on. The requirements might change in the future and functions are just very flexible and **granular** building blocks that are easy to specialize given the support for partial application and more generally the light and concise syntax of MLs. 
 
 > In FP this is thought process is very common. We think of solutions in terms of computations and their contexts and in terms of specializing computations for a given context as in the above example. 
 
@@ -148,7 +148,7 @@ There is all this buzz around immutability, constants instead of variables, and 
 
 First, programming with fewer mutations decreases a **cognitive load** on a programmer. Another way to see this is it is easier to reason about code that makes use of **mostly** immutable structures. The reason I put an emphasis on _mostly_ in the previous sentense is that in many cases it is counterproductive to dead-bolt onself to immutability as one runs the risk of making many simple things overly complicated (and this isn't ideal for real software that ships). However, huge percentages of real codes or real applications stand to benefit enormously from high degree of enforcement of immutability. Consider a function call `f(a,b,c,d)` expressed in C-style syntax or its equivalent `f a b c d` expressed in ML-style syntax. If arguments `a b c d` are immutable structures (in other words constants) upon ruminating over implementation of `f` a developer can assume that the values represented by the variables won't change in the middle of execution of `f`. This is a huge deal! Huge! If in addition `f` doesn't make use of some kind of global mutable state the function is called **pure** or **referentially transparent**. What this means is that `f` can in theory be replaced by a lookup table of all permutations of possible arguments. This makes the function very predictable in a sense that its output depends **only** on the arguments. Why is this desirable? If nothing else such computations are easier to test (as in unit testing) and easier to reason about. Pure computations **compose** into bigger pure computations which in turn again exhibit the nice characteristics we like to see as engineers.
 
-Another side of this conversation is behavioral. Using infantile language we, developers who write software that ships, are lazy; as we should be. Working on large complicated codebases we cut corners and in designs where _immutability_ isn't emphasized its just **easy** to thoughlessly add (read pass) a reference to a module (read object) that gives us all the context we need to fix a bug or add a feature. This heaven of false simplicity will necessarily eventually be disrupted when our objects over-reference one another and designs become hard to follow. In well thought out codebases modules (be they even individual functions or bundles such as classes) try to minimize dependencies. Put another way, say, a function should require to know only what it needs to complete a computation and not more. This makes it more reusable. Same goes for classes. Unencapsulated data (and, no, I am not arguing against encapsulation) such as records and enums (otherwise known as sum types) is easy to **destructure** in modern languages. This insentivises the above minimalism. 
+Another side of this conversation is behavioral. Developers who write software that ships, are naturally lazy (or energy efficient if you like). While working on large complicated codebases we cut corners and in designs where _immutability_ isn't emphasized its just **easy** to thoughlessly add (read pass) a reference to a module (read object) that gives us all the context we need to fix a bug or add a feature. This heaven of false simplicity will necessarily eventually be disrupted when our objects over-reference one another and designs become hard to follow. In well thought out codebases modules (be they even individual functions or bundles such as classes) try to minimize dependencies. Put another way, say, a function should require to know only what it needs to complete a computation and not more. This makes it more reusable. Same goes for classes. Unencapsulated data (and, no, I am not arguing against encapsulation) such as records and enums (otherwise known as sum types) is easy to **destructure** in modern languages. This insentivises the above minimalism. 
 
 It all just works together. Destructuring capabilities in languages depend on immutability or work best with immutable data. Destructuring ergonomics incentivize **informational compactness** or minimalism. The minimalism in turn lessens **cognitive load** and actually makes it easier to build **referentially transparent** functions or functions that could be replaced by a (possibly ginormous or even infinite) lookup table.
 
