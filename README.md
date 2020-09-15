@@ -108,7 +108,7 @@ Many of the above features can be emulates in languages with what I would call *
 * Q: Why code in this weird language with weird syntax?
     - Note sure who initially came up with this gem: "There is no such thing as intuitive. There's only the familiar". Really, truely deep.
     - Actually ML style syntax is pretty **ergonomic** and there are other options e.g. Scala and even Typescript if this is not to your liking.
-    - The real point is that MLs have wonderfully powerful type deduction and semantics which support FP well
+    - The real point is that advanced languages have wonderfully powerful type systems and semantics which support FP well
 * Why all this abstract mumbo jumbo? Where are the productivity gains?
     - It is true that it is not extremely clear **yet** what they are, but if nothing else we had to think less about design. And the setup is more flexible. Good abstractions are hard to come up with and we ideally would like to defer the abstraction step until we absolutely are forced to take it (or better yet have the option of making it local)
 * But didn't you say that OO and FP are complementary? It seems you are arguing against OO here. 
