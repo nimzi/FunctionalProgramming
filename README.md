@@ -22,15 +22,15 @@ So, I just said that OO and FP are more complementary than they are in conflict 
 ```F#
 type Vector2 = {x:float; y:float}
 
-let squaredLenght v = v.x * v.x + v.y * v.y
+let squaredLength v = v.x * v.x + v.y * v.y
 
-let result = squaredLenght {x = 3.0, y = 4.0}
+let result = squaredLength {x = 3.0, y = 4.0}
 ```
 
 Here we define a functions `squaredLength` that operates on a datatype `Vector2`, a two-dimensional vector. An equivalent Python definition might like like this. In ML derivatives we do not have to use parest during function application. In fact the last line (the one where we apply an argument) can be rewritten as follows:
 
 ```F#
-let result = {x = 3.0, y = 4.0} |> squaredLenght 
+let result = {x = 3.0, y = 4.0} |> squaredLength 
 ```
 
 That is with argument on the left followed by an "apply" operator and followed by function name. We shall se how this is useful. Now switching to Python...
@@ -51,9 +51,9 @@ result = Vector2(3,4).squaredLength()
 
 We purposefully chose a Python _method_ instead of function to contrast the dot notation with a function call in, say F#. So far so good. Dot notation is actually good and useful. In fact it almost looks like we traded the dot for the `|>` operator except in F# we are 'pushing' an argument into a function rather than a method. We have gained exactly **nothing** in productivity or understandability or architectural advantages.
 
-Now let us imagine we are working toward some GIS package to measure distances between locations on maps. In such packages a concept such as _metric_ is inalienable. A metric is a method of distance measurement. The _Euclidean_ metric is what we are well familiar with and what we've implemented. However in urban enviroments a _Manhattan metric_ is more appropriate where we cannot move accross diagonals and the distance is computed as `x + y`. Of course it is easy to imagine other possibilies metrics and consequently we would like write flexible code that takes a metric into account for our lenght computation.
+Now let us imagine we are working toward some GIS package to measure distances between locations on maps. In such packages a concept such as _metric_ is inalienable. A metric is a method of distance measurement. The _Euclidean_ metric is what we are well familiar with and what we've implemented. However in urban enviroments a _Manhattan metric_ is more appropriate where we cannot move accross diagonals and the distance is computed as `x + y`. Of course it is easy to imagine other possibilies metrics and consequently we would like write flexible code that takes a metric into account for our length computation.
 
-Well, in an OO scenario we would probably write a _Metric_ class that given a _Vector2_ would compute its lenght (or squaredLength). Makes sense! So, probably `squaredLenght` method now needs to live on a _Metric_ object and maybe we write a another **convenience** method on the _Vector2_ that takes a metric as a parameter. Or maybe we should write just a function (thankfully Python allows writing just functions) that takes the two objects and produces a result. But let us take a step back and assume that we decided to use methods. After all we love our dot notation for a reason. We can chain our calls and make long meaningful expressions of the form `obj.foo(arg).bar(anotherArg).zed(someOtherArg, andYetAnother)`. So we are faced with a decision on whether a _Metric_ object should feature the implementations specific to each type of geometric primitive or the primitive should just compute compute values based on a metric argument. In other words we need to decide a primary object from the secondary. Had we just used a function that took the two arguments we wouldn't have to contend with these **design** decisions. 
+Well, in an OO scenario we would probably write a _Metric_ class that given a _Vector2_ would compute its length (or squaredLength). Makes sense! So, probably `squaredLength` method now needs to live on a _Metric_ object and maybe we write a another **convenience** method on the _Vector2_ that takes a metric as a parameter. Or maybe we should write just a function (thankfully Python allows writing just functions) that takes the two objects and produces a result. But let us take a step back and assume that we decided to use methods. After all we love our dot notation for a reason. We can chain our calls and make long meaningful expressions of the form `obj.foo(arg).bar(anotherArg).zed(someOtherArg, andYetAnother)`. So we are faced with a decision on whether a _Metric_ object should feature the implementations specific to each type of geometric primitive or the primitive should just compute compute values based on a metric argument. In other words we need to decide a primary object from the secondary. Had we just used a function that took the two arguments we wouldn't have to contend with these **design** decisions. 
 
 ML-style languages provide an interesting feature called **partial application** for functions which is related to the concept of *curried* functions which enables use peculiar way of writing the above scenario down.
 
@@ -61,15 +61,15 @@ ML-style languages provide an interesting feature called **partial application**
 type Vector2 = {x:float; y:float}
 type Metric = Euclidean | Manhattan 
 
-let squaredLenght m v = 
+let squaredLength m v = 
     if m = Euclidean then v.x * v.x + v.y * v.y
     else let sum = v.x + v.y in sum * sum
 
-let result = squaredLenght Manhattan {x = 3.0, y = 4.0}
+let result = squaredLength Manhattan {x = 3.0, y = 4.0}
 // alternatively
-let result' = {x = 3.0, y = 4.0} |> squaredLenght Manhattan
+let result' = {x = 3.0, y = 4.0} |> squaredLength Manhattan
 ```
-The example below uses partial application to compute `result'` (read result prime just like in math... F# allows the prime character in identifiers). What is actually happening here is that the expression on the right of the `|>` operator produces a function and the vector literal is being applied to it. In this scenario vector is flavored to be a primary and metric as secondary. Notice that we made the **role** decision **locally** rather than at the point of definition; as it makes sense in our local use case. We could have also made the metric appear as a primary by using a _higher order function_ (a function that operates on other functions) to reverse the order of arguments in `squaredLenght`; let it be called `flip`. The last line of the above example would then look like this:
+The example below uses partial application to compute `result'` (read result prime just like in math... F# allows the prime character in identifiers). What is actually happening here is that the expression on the right of the `|>` operator produces a function and the vector literal is being applied to it. In this scenario vector is flavored to be a primary and metric as secondary. Notice that we made the **role** decision **locally** rather than at the point of definition; as it makes sense in our local use case. We could have also made the metric appear as a primary by using a _higher order function_ (a function that operates on other functions) to reverse the order of arguments in `squaredLength`; let it be called `flip`. The last line of the above example would then look like this:
 
 ```F#
 let result' =  Manhattan |> (flip squaredLength) {x = 3.0, y = 4.0}
@@ -83,11 +83,11 @@ Picking up where we left off, we could think of the F# computation as happening 
 type Vector2 = {x:float; y:float}
 type Metric = Euclidean | Manhattan 
 
-let squaredLenght m v = // ...
+let squaredLength m v = // ...
 
 
 // Now prepare a context
-let sl = squaredLenght Manhattan
+let sl = squaredLength Manhattan
 
 // Now use the context for our computation
 
@@ -112,7 +112,7 @@ let result' = sl {x = 3.0, y = 4.0}     // Or even simpler
     - Object programming is a collection of design principles and patterns in its own right. Unfortunately the design philosophy and its machinery tend to be overused at this point in our history. Objects and classes are actually excellent for top-down design and are about dividing a program into modules with possibly reusable interfaces. OO machinery is great for macro-level design decisions and when there is relative clarity and stability around requirements. At the micro level and especially in situations when requirements gyrate quickly FP principles and patterns rule supreme. In a purely object world it is tempting to classify anything and everything into hierarchies or to overbundle behaviors and to over-abstract at the micro level. Occasionally there are scenarios where both philosophical avenues are possible each involving different degrees of object and functional ingredients. In such scenarios design choices can be a matter of taste. However, a developer skilled in both families of patterns should be able to use the **combined** toolbelt to his advandage. 
     - More imporatly, a programming language which makes a functional or postfunctional **thought process** ergonomic can accelerate or otherwise improve engineering. 
 
-Let us explore the above example a little further. We were asked by a business to implement some additional operations on vectors. Among them is a query for angle between vectors. Let us, for the sake of the discussion, assume that the metric plays a role in angle measurement. Some months later a new feature in our product requires us to perform compuations on planes and spheres. Straight lines on spheres are actually arcs and their Euclidean lenghts are computed differently (taking the radius into account, etc). Let us not worry about the math and leave implementations out of it.
+Let us explore the above example a little further. We were asked by a business to implement some additional operations on vectors. Among them is a query for angle between vectors. Let us, for the sake of the discussion, assume that the metric plays a role in angle measurement. Some months later a new feature in our product requires us to perform compuations on planes and spheres. Straight lines on spheres are actually arcs and their Euclidean lengths are computed differently (taking the radius into account, etc). Let us not worry about the math and leave implementations out of it.
 
 
 ```F#
@@ -127,7 +127,7 @@ let angle m s v v = // ...
 
 // Now prepare a context
 let context = Manhattan, Spherical(earthRadius)
-let squaredLength = context ||> squaredLenght 
+let squaredLength = context ||> squaredLength
 let angle = context ||> angle
 // Now use the context for our computation
 
