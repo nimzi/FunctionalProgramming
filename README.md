@@ -191,7 +191,7 @@ Most distributed applications deal with user data at one point or another and ve
 
 I will allow myself a little digression here and will give an analogy from mathematics. Imagine a math libray that operates on different types of number kernels. More specifically, say our number objects are there to model real and complex numbers. Complex numbers can also be viewed as vectors with the corresponding geometric primities. This is also an oportunity for a hierarchy. However, another way to think about the scenario is that of a computation on a complex number as taking place in the face of the _evidence_ (evidence being an evidence object or even a type) that the number is also a vector. How is this good? This is just very flexible. We don't need to ruminate over ascendancy of each concept. Is a complex number a vector or is a vector a complex number. Later we could introduce a point object and in turn a point could be viewed as a vector or a complex number. Under this design we don't need to think about how to fit a point concept into an existing hierarchy of concepts. All we need is the evidence that a point can be viewed as, say, a complex number in certain **contexts**. This is a little abstract at this point but will become crystal clear shortly. I promise!
 
-Back to our users scenario. Let us make things a little more concrete. Our gust users don't need an id or a password, just the contact info, and their authentication never expires once, say, their contact info had been verified. Admins on the other hand have to be registered with the system and upon a period of inactivity they will be asked to re-authenticate.
+Back to our users scenario. Let us make things a little more concrete. Our guest users don't need an id or a password, just the contact info, and their authentication never expires once, say, their contact info had been verified. Admins on the other hand have to be registered with the system and upon a period of inactivity they will be asked to re-authenticate.
 
 What might that look like in F#. 
 
@@ -243,14 +243,14 @@ We can conclude now that a _type class_ is a mechanism to unify **distinct** typ
 
 - Q: Looks very complicated. I could just create a little inheritance hierarchy quickly and be done.
     - We are making distinct datatypes do the same thing without **prematurely** abstracting over them. Sometimes the luxury can require extra ceremony.
-    - MLs are featureful languages and give programmers other mechanisms to **emulate** the idea behind type classes (the gold standard being a Haskell implementation or even the upcoming at thime of writing this Scala3's **given**s or Scala2's **implicits**)
-    - Other FP-friendly languages have varying degrees of support for such compile-time abstractions. For example in Haskell, Scala, and Swift achieving the above looks much simpler.
+    - MLs are featureful languages and give programmers other mechanisms to **emulate** the idea behind type classes (the gold standard being a Haskell implementation or even the upcoming at time of writing this Scala3's **given**s or the established Scala2's **implicits**)
+    - Other FP-friendly languages have varying degrees of support for such compile-time abstractions. For example in Haskell, Scala, and Swift achieving the above is much simpler.
 - Q: Aren't you making use of OO facilities in F# anyway to achieve this?
     - First, there are other ways to achieve a similar effect in MLs. We demonstrate one good way of doing this.
     - Second, by no means do I contradict myself by momentarily using interfaces. In fact, we are leaning on inheritance for its support for parametric polymorphism.  
     - Most importantly, I wan't forced to modify the existing data types. Instead, I extended them in the direction of the requirements from "the outside".
 
-This seems to work when we are processing only one type user. Had the user types been proper objects sharing an interface we would be able to process a collection of them uniformly without, say, without type coersion. In FP we can achieve this effect with support of **algebraic datatypes** or more specifically in this case the **sum types**. We could define a _unifier_ for our users as follows:
+This seems to work when we are processing only one type of user. Had the user types been proper objects sharing an interface we would be able to process a collection of them uniformly via runtime type coersion. In FP we can achieve this effect with support of **algebraic datatypes** or more specifically in this case the **sum types**. We could define a _unifier_ for our users as follows:
 
 ```F#
 type User = Guest of GuestUser | Admin of AdminUser
@@ -266,7 +266,7 @@ for elem in userList do
     | Admin a when isAuthenticated AdminAuthEvidence u -> //...
 ```
 
-Still too complicated? Well, we could have generalized over (or unified) the user datatypes directly without the use of teh _evidence pattern_ above. Our `isAuthenticated` generic function could have been implemented as a **regular** function over the `User` **sum type**. As simple as that. In fact languages such as Typescript and Scala3 allow the declarations with even less ceremony via **nameless sum types** where we declare a function argument as being either a `GuestUser` or an `AdminUser`. This approach is made yet more ergonomic by the excellent **pattern matching** capabilities of modern programming languages.
+Still too complicated? Well, we could have generalized over (or unified) the user datatypes directly without the use of the _evidence pattern_ above. Our `isAuthenticated` generic function could have been implemented as a **regular** function over the `User` **sum type**. As simple as that. In fact languages such as Typescript and Scala3 allow the declarations with even less ceremony via **nameless sum types** where we declare a function argument as being either a `GuestUser` or an `AdminUser`. This approach is made yet more ergonomic by the excellent **pattern matching** capabilities of modern programming languages.
 
 We would define our users as before.
 
@@ -284,7 +284,7 @@ for elem in userList do
     | Admin a when Admin.isAuthenticated u -> //...
 ```
 
-...with **one** downside being that since F# and OCaml do not support function overloading we have to separate the versions of auth functions into the corresponding modules (we had to create modules `Guest` and `Admin` without having a construct enforce an interface). Previously we used `Authenticated<_>` as a semantic label of sorts to define a concept. This is extremely useful for documenting the intent.
+...with **one** downside being that since F# and OCaml do not support function overloading we have to separate the versions of auth functions into the corresponding modules (we had to create modules `Guest` and `Admin` without having a construct to enforce an interface). Previously we used `Authenticated<_>` as a semantic label of sorts to define a concept. The former is extremely useful for documenting the intent.
 
 > Typeclasses are ultimately supported so that **ADTs** can be implemented. Scala for instance supports implicit parameters; paremeters that do not need to be specified at call site...
 
