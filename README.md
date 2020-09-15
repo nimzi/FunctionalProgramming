@@ -55,7 +55,7 @@ Now let us imagine we are working toward some GIS package to measure distances b
 
 Well, in an OO scenario we would probably write a _Metric_ class that given a _Vector2_ would compute its length (or squaredLength). Makes sense! So, probably `squaredLength` method now needs to live on a _Metric_ object and maybe we write a another **convenience** method on the _Vector2_ that takes a metric as a parameter. Or maybe we should write just a function (thankfully Python allows writing just functions) that takes the two objects and produces a result. But let us take a step back and assume that we chose to use methods (as in OO) instead of functions. After all we love our dot notation for a reason. We can chain our calls and make long meaningful expressions of the form `obj.foo(arg).bar(anotherArg).zed(someOtherArg, andYetAnother)`. With *objects-by-default* mentality we are immediately faced with a decision on whether a _Metric_ object should feature the implementations specific to each type of geometric primitive or the primitive should just compute compute values based on a metric argument. In other words we need to decide a primary object from the secondary. Had we just used a function that took the two arguments we wouldn't have to contend with these **design** decisions. 
 
-In addition, ML-style languages provide an interesting feature called **partial application** for functions which is related to the concept of *curried* functions which enables a peculiar way of writing the above scenario down.
+In addition, ML-style languages provide an interesting feature called **partial application** (think C++ bind built into a language) for functions which is cohesive with the concept of *curried* functions. The features enable a peculiar way of writing the above scenario down.
 
 ```F#
 type Vector2 = {x:float; y:float}
@@ -75,11 +75,13 @@ The example below uses partial application to compute `result'` (read result pri
 let result' =  Manhattan |> (flip squaredLength) {x = 3.0, y = 4.0}
 ```
 
+We could think of the above computation as happening inside a **context** of a _metric_ where we **configure** the context prior to its utilization. This is a typical way of organizing code in a postfunctional language. Rather than building and connecting objects that cater to a given use case one configures a context in which a computation takes place. Moreover, this is **just natural** in languages which support [dynamic scoping or late binding] (https://en.wikipedia.org/wiki/Scope_(computer_science)#:~:text=In%20practice%2C%20with%20lexical%20scope,function%2C%20and%20so%20on%2C%20progressing).
+
+
 As a sidenote notice that a Python equivalent of the above would look something along the lines of `flip(squaredLength)(Manhattan, Vector2(3,4))`. This isn't bad, but try mentally extending this thought process in its natural direction and its easy to conclude that the operator based syntax exerts much lower cognitive load than the army of parens in a highly nested C-style function call syntax. E.g. `f(g(h(k(arg))))` tends to be less readable than a **pipe** operator `|>` based version `arg |> k |> h |> g |> f`. 
 
 It is worth noticing that partial application feature all but obliterates the need for _creational patterns_ (as in OO parlance) such as _Factory_, _Builder_, and _Decorator_. In the dot notation world it is common to use a builder _syntactic_ pattern to clean tings up. There we chain method calls as in `arg.k().h().g().f()`. This looks suspiciously similar to the `arg |> k |> h |> g |> f`, however, to achive "dotness" we have to invest in declaring possibly multiple classes that cooperate in this way; we have to come up with **good** names for the calles too. Piping supported by naturaly currying and partial application is just more flexible and concise.
 
-Picking up where we left off, we could think of the above F# computation as happening inside a **context** of a _metric_ where we **configure** the context prior to its utilization. This thought process of computing in a context and of configuring a context shows up all over the place in functional design.
 
 ```F#
 type Vector2 = {x:float; y:float}
