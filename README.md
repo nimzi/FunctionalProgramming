@@ -207,8 +207,16 @@ UIVIew  +--- UITableView
 Both OCaml and F# support classes and objects. Let us imagine they didn't. How would we model the hierarchy via what I call the core language (the core of MLs)? The typical answer to everything is in FP is functions, functions, and again functions.
 
 ```F#
-type Classes = UIView | UICollectionView | UITableView | UIControl | UIButton | UITextField | UILabel
+type Classes = NSObject | UIResponder | UIView | UICollectionView | UITableView | UIControl | UIButton | UITextField | UILabel
 
+
+
+let instanceOf = function
+    | NSObject -> NSObject
+    | UIResponder -> NSObject
+    | UIView -> UIResponder
+    | UICollectionView | UITableView | UIControl -> UIView
+    | UIButton | UITextField | UILabel -> UIControl
 ```
 
 
