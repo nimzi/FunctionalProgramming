@@ -185,7 +185,7 @@ The real price we pay for all these niceties is more education which is the most
 
 ## What about Inheritance, Encapsulation, and Polymorphism
 
-So, as OO programmers we are trained to recognize hierarchies and to use the hierarchical nature of things to our advantage and at first sight it might seem that FP does away with all that. Let us remember that hierarchies are first of all graphs and more precisely acyclic digraphs with the most common digraphs being trees (which we lovingly tend to call single inheritance hierarchies). Functional programmers swim with the graphs except they tend use many more patterns to deal with them and to take advantage of, at times, hierarchical nature of varous domains.
+So, as OO programmers we are trained to recognize hierarchies and to use the hierarchical nature of things to our advantage and at first sight it might seem that FP does away with all that. Let us remember that hierarchies are first of all graphs and more precisely acyclic digraphs with the most common digraphs being trees (which we lovingly tend to call single inheritance hierarchies). Functional programmers swim with the graphs except they tend to use many more patterns to deal with them and to take advantage of, at times, hierarchical nature of varous domains.
 
 Most distributed applications deal with user data at one point or another and very often with their authentication and authorization. Let us briefly remind ourselves that authentication aspect deals with recognizing a valid user (given, say, and id and a password) while authorization deals with capabilities of users (or application capabilities as they relate to a given user). Let us further assume that in our system we have _basic_ users (some designs use a term guest user) and _advanced_ ones (called admins when approprite for an application). We can imagine that admins are _authorized_ to do everything _guests_ are and more. These requirements immediately present an opportunity to employ OO features and define a hierarchy. Moreover, it might turn out well in the unlikely case that the requirements will persist over the lifecycle of an application. A common functional pattern is to think in terms of _data_ and _evidence_ that the data is something or other and to allow computations on the user data to take place in the **context** of the evidence that a user is something or another. 
 
@@ -239,7 +239,7 @@ else
   // authentication must have expired expell all her activity
 ```
 
-We can conclude now that a _type class_ is a mechanism to unify **distinct** types. In some sense to add behavior to types post-definition and without modifying their internals. Is is a compile-time mechanism that relies on compiler support for parametric polymorphism.
+We can conclude now that a _type class_ is a mechanism to unify **distinct** types. In some sense to add behavior to types post-definition and without modifying their internals. It is a compile-time mechanism that relies on compiler support for parametric polymorphism.
 
 - Q: Looks very complicated. I could just create a little inheritance hierarchy quickly and be done.
     - We are making distinct datatypes do the same thing without **prematurely** abstracting over them. Sometimes the luxury can require extra ceremony.
