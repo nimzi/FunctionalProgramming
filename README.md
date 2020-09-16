@@ -215,30 +215,41 @@ let superclassOf = function
     | UIView -> UIResponder
     | UICollectionView | UITableView | UIControl -> UIView
     | UIButton | UITextField | UILabel -> UIControl
-
-let rec ancestorOf x =
-    let super = superclassOf x
-    if super = x then [x] else super :: ancestorOf super
     
-let ancestorOf x =
-    let rec ancestorOf' x =
+let ancestorsOf x =
+    let rec ancestorsOf' x =
         let super = superclassOf x
         if super = x then [x] 
-        else super :: ancestorOf' super
-    ancestorOf' x |> Set.ofList 
+        else super :: ancestorsOf' super
+    ancestorsOf' x |> Set.ofList
+
+let isAncestorsOf x y =
+    ancestorsOf y |> Set.contains x       
 ```
 
-Done! Hierarchy modeled. How do we model objects? Functions, functions, and function **bundles**. Objects can be represented as either tuples or records of functions. For example:
+Done! Hierarchy emulated. How do we model objects? Functions, functions, and function **bundles**. Objects can be represented as either tuples or records of functions. For example:
 
 ```F#
-type UIViewObject = { draw : unit->unit; bounds: unit->NSRect; ... }
+type UIViewObject = { Draw : unit->unit; Bounds: unit->NSRect; (* ... *) }
 ```
 
-Better yet model them with anonymous records
+Better yet model them with F# anonymous records
 
 ```F#
-type UIViewObject = {| draw : unit->unit; bounds: unit->NSRect; ... |}
+type UIViewObject = {| Draw : unit->unit; Bounds: unit->NSRect; (* ... *) |}
 ```
+
+when **casting up the hierarchy becomes just the projection**. In other words given an object `{A = a; B = b; C = c; C = d}` where the values are functions a superclass will have the form of, say, `{A = a; B = b}`. Encapsulation is automatically baked in as the functions can collectively capture shared (possibly mutable) state. In addition, if we wanted to make object type discoverable at runtime we could give every record a _type_ field and test asncestry as needed.
+
+```F#
+type UIViewObject = {| 
+    Type : Class
+    Draw : unit -> unit 
+    Bounds: unit -> NSRect
+    (* ... *) |}
+```
+
+Naturally, constructors are again just functions that manufacture the appropriate anonymous records.
 
 
 
