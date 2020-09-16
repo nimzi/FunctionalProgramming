@@ -187,13 +187,21 @@ The real price we pay for all these niceties is more education which is the most
 
 As OO programmers we are trained to recognize hierarchies and to use the hierarchical nature of things to our advantage and at first sight it might seem that FP does away with all that. Let us remember that hierarchies are first of all graphs and more precisely acyclic digraphs with the most common digraphs being trees (which we lovingly tend to call single inheritance hierarchies). Functional programmers swim with the graphs except they tend to use many more patterns to take advantage of, at times, hierarchical nature of varous domains.
 
-Consider a GUI library such Apple's UIKit. There is a _UIView_ at the top of the widget hierarchy. There are container views such as _UITableView_ and _UICollectionView_ and controls such as _UIButton_, _UITextField_, and _UILabel_. The hierarchy looks like this:
+Consider a GUI library such Apple's UIKit. There is a _UIView_ at the top of the widget hierarchy. There are container views such as _UITableView_ and _UICollectionView_ and controls such as _UIButton_, _UITextField_, and _UILabel_. The hierarchy looks like this.
 
-            +------> UICollectionView
-            |
-UIView -----+------> UITableView        +
-            |                           |
-            +------> UIControl----------+
+```
+          UICollectionView
+         /
+UIVIew  +--- UITableView
+         \
+          \
+            UIControl -+--- UIButton
+                       |
+                       +--- UITextField 
+                       |
+                       +--- UILabel
+        
+```        
                                          
 
 
