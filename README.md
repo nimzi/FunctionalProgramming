@@ -207,17 +207,39 @@ UIVIew  +--- UITableView
 Both OCaml and F# support classes and objects. Let us imagine they didn't. How would we model the hierarchy via what I call the core language (the core of MLs)? The typical answer to everything is in FP is functions, functions, and again functions.
 
 ```F#
-type Classes = NSObject | UIResponder | UIView | UICollectionView | UITableView | UIControl | UIButton | UITextField | UILabel
+type Class = NSObject | UIResponder | UIView | UICollectionView | UITableView | UIControl | UIButton | UITextField | UILabel
 
-
-
-let instanceOf = function
+let superclassOf = function
     | NSObject -> NSObject
     | UIResponder -> NSObject
     | UIView -> UIResponder
     | UICollectionView | UITableView | UIControl -> UIView
     | UIButton | UITextField | UILabel -> UIControl
+
+let rec ancestorOf x =
+    let super = superclassOf x
+    if super = x then [x] else super :: ancestorOf super
+    
+let ancestorOf x =
+    let rec ancestorOf' x =
+        let super = superclassOf x
+        if super = x then [x] 
+        else super :: ancestorOf' super
+    ancestorOf' x |> Set.ofList 
 ```
+
+Done! Hierarchy modeled. How do we model objects? Functions, functions, and function **bundles**. Objects can be represented as either tuples or records of functions. For example:
+
+```F#
+type UIViewObject = { draw : unit->unit; bounds: unit->NSRect; ... }
+```
+
+Better yet model them with anonymous records
+
+```F#
+type UIViewObject = {| draw : unit->unit; bounds: unit->NSRect; ... |}
+```
+
 
 
 Imagine a math libray that operates on different types of number kernels. More specifically, say our number objects are there to model real and complex numbers. Complex numbers can also be viewed as vectors with the corresponding geometric primities. This presents an oportunity for a hierarchy. However, another way to think about the scenario is that of a computation on a complex number as taking place in the face of the _evidence_ (evidence being an evidence object or even a type) that the number is also a vector. How is this good? This is just very flexible. We don't need to ruminate over ascendancy of each concept. Is a complex number a vector or is a vector a complex number? Later we could introduce a point object and in turn a point could be viewed as a vector or a complex number. Under this design we don't need to think about how to fit a point concept into an existing hierarchy of concepts. All we need is the evidence that a point can be viewed as, say, a complex number in certain **contexts**. This is a little abstract at this point but will become crystal clear shortly. I promise!
