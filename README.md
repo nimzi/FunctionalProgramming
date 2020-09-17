@@ -282,7 +282,7 @@ type 'a Dottable =
 ```
 Here `Showable` is a record with a single conversion function; roughly a `toString` function. On the other hand `Dottable` asks for multiplication primitive and a `Zero` constant. Voila, **type is an interface**! Let us now make an `bool`s and `int`s `Showable` and `Dottable`.
 
-```
+```F#
 let showBool : bool Showable = 
     { Show = function true  -> "True" | false -> "False"}
      
