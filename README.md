@@ -304,7 +304,7 @@ let mulInt : int Dottable =
 
 Excellent! But what about `List`s of `int` and `bool`?
 
-```
+```f#
 let showList {Show=show} =
        {Show = fun xs ->
         let rec go first = function
