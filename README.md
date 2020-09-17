@@ -183,7 +183,7 @@ So, what is the verdict on pervasive immutability? In my opinion the zero sum ga
 The real price we pay for all these niceties is more education which is the most expensive commodity to come by. Hence the proposed name of **advanced** programming as the approach does require a greater amount of investment. Moreover, to fully apprecite the patterns unfortunately (or fortunately depending on perspective) a look into at least introductory concepts of **algebra** (as in abstract algebra) is useful. This is why I suspect FP is not as popular as, say, OOP. In fact, to be a masterful object oriented programmer also takes a significant investment; where this reality is currently completely overlooked by the big tech companies that set the tone for hiring. Another caveat is that folks come from all sorts of backgrounds into the industry and are not equally positioned to quickly integrate the thoughtprocess into practice. While it is easy for most smart people to learn how to program, it takes more effort and most importantly **mental pliability** or willingness to assimilate more information that is a little **abstract** within a topic they likely consider themselves an expert in.
 
 
-## What about Inheritance, Encapsulation, and Polymorphism
+## What about Inheritance, Encapsulation, Polymorphism, and Runtime Type Coersion
 
 As OO programmers we are trained to recognize hierarchies and to use the hierarchical nature of things to our advantage and at first sight it might seem that FP does away with all that. Let us remember that hierarchies are first of all graphs and more precisely acyclic digraphs with the most common digraphs being trees (which we lovingly tend to call single inheritance hierarchies). Functional programmers swim with the graphs except they tend to use many more patterns to take advantage of, at times, hierarchical nature of varous domains.
 
@@ -207,7 +207,7 @@ UIVIew  +--- UITableView
 Both OCaml and F# support classes and objects. Let us imagine they didn't. How would we model the hierarchy via what I call the core language (the core of MLs)? The typical answer to everything is in FP is functions, functions, and again functions.
 
 ```F#
-type Class = NSObject | UIResponder | UIView | UICollectionView | UITableView | UIControl | UIButton | UITextField | UILabel
+type Class = UIView | UICollectionView | UITableView | UIControl | UIButton | UITextField | UILabel | NSObject | UIResponder
 
 let superclassOf = function
     | NSObject -> NSObject
@@ -227,7 +227,7 @@ let isAncestorsOf x y =
     ancestorsOf y |> Set.contains x       
 ```
 
-Done! Hierarchy emulated. How do we model objects? Functions, functions, and function **bundles**. Objects can be represented as either tuples or records of functions. For example:
+Done! Hierarchy emulated. In fact, could have tweaked the above just slightly to model multiple inheritance. Or better yet model arbitrary class relations that suit our specific domain. For example the UIKit has a notion of _controllers_. The _UITableView_ has a corresponding _UITableViewController_ class. We could "document" this relationship via (again) functions. So, how do we model objects? Functions, functions, and function **bundles**. Objects can be represented as either tuples or records of functions. For example:
 
 ```F#
 type UIViewObject = { Draw : unit->unit; Bounds: unit->NSRect; (* ... *) }
@@ -239,7 +239,7 @@ Better yet model them with F# anonymous records
 type UIViewObject = {| Draw : unit->unit; Bounds: unit->NSRect; (* ... *) |}
 ```
 
-when **casting up the hierarchy becomes just the projection**. In other words given an object `{A = a; B = b; C = c; C = d}` where the values are functions a superclass will have the form of, say, `{A = a; B = b}`. Encapsulation is automatically baked in as the functions can collectively capture shared (possibly mutable) state. In addition, if we wanted to make object type discoverable at runtime we could give every record a _type_ field and test asncestry as needed.
+when **casting up the hierarchy becomes just the projection**. In other words given an object `{A = a; B = b; C = c; C = d}` where the values are functions a superclass will have the form of, say, `{A = a; B = b}`. Encapsulation is automatically baked in as the functions can collectively capture shared (possibly mutable) state. In addition, if we wanted to make object type discoverable at runtime we could give every record a _type_ field and test asncestry as needed. 
 
 ```F#
 type UIViewObject = {| 
@@ -249,9 +249,23 @@ type UIViewObject = {|
     (* ... *) |}
 ```
 
-Naturally, constructors are again just functions that manufacture the appropriate anonymous records.
+Or even something like this way:
 
+```F#
+type UIViewObject = 
+    Object of 
+        isa:Class * 
+        methods: 
+            {| Draw : unit -> unit
+               Bounds: unit -> NSRect 
+               (* ... *) |}
+```
 
+Naturally, constructors are again just functions that manufacture the appropriate anonymous records. We could even group object construction as needed when, for example, a cluster of classes share the same interface. Speaking of interfaces, what is an interface in our scheme of things? Strangely enough a projection **again**. We could streamline interface extraction by providing functions with descriptive names that yield the projections. In the current scheme we do "loose" the runtime type coersion **down** the hierarchy or **downcasting**. However, most of the time downcasting is a sign of bad OO design, and even when we have to emulate downcasting we can circumvent the issue as the class is known.
+
+It should be clear from the example that OOP can be easily modeled in core MLs. Generally speaking, dynamic dispatch can be easily constructed and maintained using functional primities. Functions naturally encapsulate state and they trivially support description of relationship graphs. There is a caveat! This setup only works when the universe of classes is known at compile time. We would have to do much more leg work if we wanted to design a setup that worked with dynamic linking.
+
+## On to Typeclasses
 
 Imagine a math libray that operates on different types of number kernels. More specifically, say our number objects are there to model real and complex numbers. Complex numbers can also be viewed as vectors with the corresponding geometric primities. This presents an oportunity for a hierarchy. However, another way to think about the scenario is that of a computation on a complex number as taking place in the face of the _evidence_ (evidence being an evidence object or even a type) that the number is also a vector. How is this good? This is just very flexible. We don't need to ruminate over ascendancy of each concept. Is a complex number a vector or is a vector a complex number? Later we could introduce a point object and in turn a point could be viewed as a vector or a complex number. Under this design we don't need to think about how to fit a point concept into an existing hierarchy of concepts. All we need is the evidence that a point can be viewed as, say, a complex number in certain **contexts**. This is a little abstract at this point but will become crystal clear shortly. I promise!
 
