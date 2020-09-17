@@ -267,8 +267,90 @@ It should be clear from the example that OOP can be easily modeled in core MLs. 
 
 ## Onto Typeclasses
 
+### Example 0
+Imagine a math libray that operates on different types of number kernels. More specifically, say our number objects are there to model real and complex numbers. Complex numbers can also be viewed as vectors with the corresponding geometric primities. This presents an oportunity for a hierarchy; or more precisely to torture onself over how to design a hierarchy. However, another way to think about the scenario is that of a computation on a complex number as taking place in the face of the _evidence_ (evidence being an evidence object or even a type) that the number is also a vector. How is this good? This is just very flexible. We don't need to ruminate over ascendancy of each concept. Is a complex number a vector or is a vector a complex number? Later we could introduce a point object and in turn a point could be viewed as a vector or a complex number. Under this design we don't need to think about how to fit a point concept into an existing hierarchy of concepts. All we need is an evidence that a point can be viewed as, say, a complex number in certain **contexts**. Incidentally, a similar monologue could take place about integers and floats. If an integer is a specialized float it should live down the hierarchy. Alternatively every float has an integer part and therefore it seems natural to have it the other way. The evidence pattern is a little abstract at this point but will become crystal clear shortly. I promise!
+
+The simplest scenario is when our evidence is an adapter from one type to another. We could design a programming language that automatically "converts" between datatypes when such conversion functions are present when needed. We could also pass the conversion function (or bundle) as an extra argument to a utilizing function. Another way to think about evidence is that evidence is a lens that enables us to see some data in a way that makes it useful for a given computation. Thus evidence could be a conversion function in the simplest case but more often will be a function bundle or even an object. Most likely in ML evidence will be generic as to take advantage of MLs type system.
+
+```F#
+type 'a Showable = {Show: 'a -> string}
+type 'a Dottable = 
+    { 
+        Mul: 'a * 'a -> 'a 
+        Zero: 'a
+    }
+```
+Here `Showable` is a record with a single conversion function; roughly a `toString` function. On the other hand `Dottable` asks for multiplication primitive and a `Zero` constant. Voila, **type is an interface**! Let us now make an `bool`s and `int`s `Showable` and `Dottable`.
+
+```
+let showBool : bool Showable = 
+    { Show = function true  -> "True" | false -> "False"}
+     
+let showInt : int Showable = 
+    { Show = fun (i:int) -> string i }
+
+let mulBool : bool Dottable =
+    { 
+        Mul = fun (x,y) -> x && y 
+        Zero = false 
+    }
+
+let mulInt : int Dottable = 
+    { 
+        Mul = fun (x,y) -> x * y  
+        Zero = 0
+    }
+```
+
+Excellent! But what about `List`s of `int` and `bool`?
+
+```
+let showList {Show=show} =
+       {Show = fun xs ->
+        let rec go first = function
+          | []   -> "]"
+          | h::t ->  
+              (if first then "" else ", ") + show h + go false t
+        in "[" + go true xs}
+        
+let mulList {Mul = mul; Zero = zero} = 
+    let rec zip = function
+        | ([],[]) -> []
+        | (h1::t1, h2::t2) -> (mul (h1,h2)) :: zip (t1,t2)
+        | (_::t, []) | ([], _::t) -> zero :: zip (t,[])
+
+    {
+        Zero = []
+        Mul = zip
+    }
+        
+```
+
+Multiplying a list pairwise multiplies its elements and zeroes out the rest if lengths are missmatched. Notice that list evidence is completely generic and will transform any `Showable` and `Dottable`. This is **verry efficient**!!! Now onto using this stuff. We write functions that send showables to console.
+
+```F#
+let print {Show=show} x = printfn "%A" (show x)     
+
+let printSquare (show:'a Showable, {Mul = mul}) x = 
+    (x, x) |> mul |> print show
+```
+
+...and use them
+
+```F#
+// configure the toolbelt
+let showIntList = showList showInt
+let mulIntList = mulList mulInt
+
+// call specialized functions
+true |> print showBool 
+[1;2;3;4] |> print showIntList 
+[10;20;30] |> printSquare (showIntList, mulIntList) 
+```
+
+This technique is known as dictionary passing. While F# and OCaml do not have baked in features for typeclasses the pattern can easily be appliced in this way.
+
 ### Example 1
-Imagine a math libray that operates on different types of number kernels. More specifically, say our number objects are there to model real and complex numbers. Complex numbers can also be viewed as vectors with the corresponding geometric primities. This presents an oportunity for a hierarchy. However, another way to think about the scenario is that of a computation on a complex number as taking place in the face of the _evidence_ (evidence being an evidence object or even a type) that the number is also a vector. How is this good? This is just very flexible. We don't need to ruminate over ascendancy of each concept. Is a complex number a vector or is a vector a complex number? Later we could introduce a point object and in turn a point could be viewed as a vector or a complex number. Under this design we don't need to think about how to fit a point concept into an existing hierarchy of concepts. All we need is the evidence that a point can be viewed as, say, a complex number in certain **contexts**. This is a little abstract at this point but will become crystal clear shortly. I promise!
 
 Most distributed applications deal with user data at one point or another and very often with their authentication and authorization. Let us briefly remind ourselves that authentication aspect deals with recognizing a valid user (given, say, and id and a password) while authorization deals with capabilities of users (or application capabilities as they relate to a given user). Let us further assume that in our system we have _basic_ users (some designs use a term guest user) and _advanced_ ones (called admins when approprite for an application). We can imagine that admins are _authorized_ to do everything _guests_ are and more. These requirements immediately present an opportunity to employ OO features and define a hierarchy. Moreover, it might turn out well in the unlikely case that the requirements will persist over the lifecycle of an application. A common functional pattern is to think in terms of _data_ and _evidence_ that the data is something or other and to allow computations on the user data to take place in the **context** of the evidence that a user is something or another. 
 
