@@ -27,7 +27,7 @@ let squaredLength v = v.x * v.x + v.y * v.y
 let result = squaredLength {x = 3.0; y = 4.0}
 ```
 
-Here we define a function `squaredLength` that operates on a datatype `Vector2`, a two-dimensional vector. An equivalent Python definition might like like this. In ML derivatives we do not have to use parest during function application. In fact the last line (the one where we apply an argument) can be rewritten as follows:
+Here we define a function `squaredLength` that operates on a datatype `Vector2`, a two-dimensional vector. An equivalent Python definition might look like this. In ML derivatives we do not have to use parest during function application. In fact the last line (the one where we apply an argument) can be rewritten as follows:
 
 ```F#
 let result = {x = 3.0; y = 4.0} |> squaredLength 
